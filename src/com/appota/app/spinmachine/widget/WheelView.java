@@ -67,6 +67,9 @@ public class WheelView extends View {
 	// Count of visible items
 	private int visibleItems = DEF_VISIBLE_ITEMS;
 	
+	// Set if the last one.
+	public int indexOfWheel;
+	
 	// Item height
 	private int itemHeight = 0;
 
@@ -84,6 +87,22 @@ public class WheelView extends View {
 
 	// Cyclic
 	boolean isCyclic = false;
+	
+	//The number of cycle
+	
+	private int numberOfCycle;
+	
+	public int getCycle() {
+		return numberOfCycle;
+	}
+
+	public void setCycle(int cycle) {
+		this.numberOfCycle = cycle;
+	}
+	public void setIndexOfWheel(int index)
+	{
+		indexOfWheel=index;
+	}
 	
 	// Items layout
 	private LinearLayout itemsLayout;
@@ -749,7 +768,8 @@ public class WheelView extends View {
 		if (itemsLayout != null) {
 			int first = recycle.recycleItems(itemsLayout, firstItem, range);
 			updated = firstItem != first;
-			firstItem = first;Log.d(TAG, "item layout != null re create first item  ="+ firstItem);
+			firstItem = first;
+			//Log.d(TAG, "item layout != null re create first item  ="+ firstItem);
 		} else {
 			createItemsLayout();
 			updated = true;
