@@ -38,7 +38,7 @@ public interface WheelViewAdapter {
 	 * @param parent the parent that this view will eventually be attached to
 	 * @return the wheel item View
 	 */
-	public View getItem(int index, View convertView, ViewGroup parent);
+	public View getItem(int index, View convertView, ViewGroup parent,int width,int height);
 
 	/**
 	 * Get a View that displays an empty wheel item placed before the first or after

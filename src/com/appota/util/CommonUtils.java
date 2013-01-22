@@ -7,7 +7,9 @@ import java.io.InputStreamReader;
 
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Resources;
 import android.telephony.TelephonyManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 /**
@@ -34,7 +36,7 @@ public class CommonUtils {
 		// Return full string
 		return total.toString();
 	}
-	
+
 	public static String getDeviceId(Context context) {
 		TelephonyManager tManager = (TelephonyManager) context
 				.getSystemService(Context.TELEPHONY_SERVICE);
@@ -42,41 +44,65 @@ public class CommonUtils {
 		Log.d("Device Id", device_id);
 		return device_id;
 	}
-	
-	public static String getDeviceVersion()
-	{
+
+	public static String getDeviceVersion() {
 		Log.d(TAG, android.os.Build.VERSION.RELEASE);
 		return android.os.Build.VERSION.RELEASE;
 	}
-	
-	public static String getDeviceOs()
-	{
+
+	public static String getDeviceOs() {
 		return "android";
 	}
-	
-	public static String getVendor()
-	{
+
+	public static String getVendor() {
 		Log.d(TAG, android.os.Build.MANUFACTURER);
 		return android.os.Build.MANUFACTURER;
 	}
-	
-	public static String getPhoneNumber(Context context)
-	{
-		TelephonyManager tMgr =(TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
+
+	public static String getPhoneNumber(Context context) {
+		TelephonyManager tMgr = (TelephonyManager) context
+				.getSystemService(Context.TELEPHONY_SERVICE);
 		Log.d(TAG, tMgr.getLine1Number());
 		return tMgr.getLine1Number();
 	}
-	
-	public static int getClientVersion(Context context)
-	{
+
+	public static int getClientVersion(Context context) {
 		try {
-			Log.d(TAG, context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode+"");
-			return  context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
+			Log.d(TAG,
+					context.getPackageManager().getPackageInfo(
+							context.getPackageName(), 0).versionCode
+							+ "");
+			return context.getPackageManager().getPackageInfo(
+					context.getPackageName(), 0).versionCode;
 		} catch (NameNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			
+
 		}
 		return -1;
+	}
+
+	public static float convertDpToPixel(float dp, Context context) {
+		Resources resources = context.getResources();
+		DisplayMetrics metrics = resources.getDisplayMetrics();
+		float px = dp * (metrics.densityDpi / 160f);
+		return px;
+	}
+
+	/**
+	 * This method converts device specific pixels to device independent pixels.
+	 * 
+	 * @param px
+	 *            A value in px (pixels) unit. Which we need to convert into db
+	 * @param context
+	 *            Context to get resources and device specific display metrics
+	 * @return A float value to represent db equivalent to px value
+	 */
+	public static float convertPixelsToDp(float px, Context context) {
+		Resources resources = context.getResources();
+		DisplayMetrics metrics = resources.getDisplayMetrics();
+		float dp = px / (metrics.densityDpi / 160f);
+		return dp;
+
 	}
 }

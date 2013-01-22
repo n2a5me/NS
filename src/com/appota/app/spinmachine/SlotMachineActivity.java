@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -76,9 +75,6 @@ public class SlotMachineActivity extends Activity {
 
 	protected void onStartClick() {
 		// TODO Auto-generated method stub
-		Log.d("", "onclick");
-		Log.d("", mSpin.game_token);
-		Log.d("", mSpin.isFree + "");
 		if (mSpin != null) {
 			if (mSpin.isFree) {
 				spin();
@@ -205,7 +201,8 @@ public class SlotMachineActivity extends Activity {
 		// Image size
 		final int IMAGE_WIDTH = 60;
 		final int IMAGE_HEIGHT = 36;
-
+		int deseart_width = 0;
+		int deseart_height = 0;
 		// Slot machine symbols
 		private final int items[] = new int[] { R.drawable.star,
 				R.drawable.tym, R.drawable.crow
@@ -241,16 +238,27 @@ public class SlotMachineActivity extends Activity {
 			return scaled;
 		}
 
+		private Bitmap loadImage(int id, int width, int height) {
+			Bitmap bitmap = BitmapFactory.decodeResource(
+					context.getResources(), id);
+			Bitmap scaled = Bitmap.createScaledBitmap(bitmap, width, height,
+					true);
+			bitmap.recycle();
+			return scaled;
+		}
+
 		@Override
 		public int getItemsCount() {
 			return items.length;
 		}
 
 		// Layout params for image view
-		final LayoutParams params = new LayoutParams(IMAGE_WIDTH, IMAGE_HEIGHT);
+		final LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT,
+				LayoutParams.WRAP_CONTENT);
 
 		@Override
-		public View getItem(int index, View cachedView, ViewGroup parent) {
+		public View getItem(int index, View cachedView, ViewGroup parent,
+				int width, int height) {
 			ImageView img;
 			if (cachedView != null) {
 				img = (ImageView) cachedView;
@@ -261,8 +269,14 @@ public class SlotMachineActivity extends Activity {
 			SoftReference<Bitmap> bitmapRef = images.get(index);
 			Bitmap bitmap = bitmapRef.get();
 			if (bitmap == null) {
-				bitmap = loadImage(items[index]);
-				images.set(index, new SoftReference<Bitmap>(bitmap));
+				if (width != 0 && height != 0) {
+					bitmap = loadImage(items[index], width, height);
+					images.set(index, new SoftReference<Bitmap>(bitmap));
+				} else {
+					bitmap = loadImage(items[index]);
+					images.set(index, new SoftReference<Bitmap>(bitmap));
+				}
+
 			}
 			img.setImageBitmap(bitmap);
 
