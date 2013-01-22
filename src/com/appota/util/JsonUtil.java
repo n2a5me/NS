@@ -8,6 +8,7 @@ import android.util.Log;
 import com.appota.network.API;
 import com.appota.slotmachine.object.GreenTym;
 import com.appota.slotmachine.object.PurpleTym;
+import com.appota.slotmachine.object.Reward;
 import com.appota.slotmachine.object.Spin;
 
 public class JsonUtil {
@@ -101,6 +102,28 @@ public class JsonUtil {
 				Spin spin = new Spin(purpleTym, greenTym, gameToken,
 						status_spinner);
 				return spin;
+			} catch (JSONException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		return null;
+	}
+	public static Reward getRewardData(String str) {
+		if (checkUserStatus(str)) {
+			JSONObject rewardJsonObject;
+			try {
+				JSONObject jsonObject = new JSONObject(str);
+				JSONObject dataJsonObject = jsonObject.getJSONObject("data");
+				rewardJsonObject = dataJsonObject.getJSONObject("reward");
+				int new_purple_tym=dataJsonObject.getInt("new_purple_tym");
+				int new_green_tym=dataJsonObject.getInt("new_green_tym");
+				String description = rewardJsonObject.getString("desciption");
+				String image = rewardJsonObject.getString("image");
+				String gametype = rewardJsonObject.getString("game_type");
+				int idreward = rewardJsonObject.getInt("id");
+				Reward reward=new Reward(idreward, description,gametype, image,new_purple_tym,new_green_tym);
+				return reward;
 			} catch (JSONException e) {
 				e.printStackTrace();
 				return null;
