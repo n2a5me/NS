@@ -99,19 +99,19 @@
 
                         <com.appota.app.spinmachine.widget.WheelView
                             android:id="@+id/slot_1"
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="fill_parent"
                             android:layout_weight="1" />
 
                         <com.appota.app.spinmachine.widget.WheelView
                             android:id="@+id/slot_2"
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="fill_parent"
                             android:layout_weight="1" />
 
                         <com.appota.app.spinmachine.widget.WheelView
                             android:id="@+id/slot_3"
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="fill_parent"
                             android:layout_weight="1" />
                     </LinearLayout>
