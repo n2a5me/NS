@@ -118,15 +118,7 @@ public class JsonUtil {
 				rewardJsonObject = dataJsonObject.getJSONObject("reward");
 				int new_purple_tym=dataJsonObject.getInt("new_purple_tym");
 				int new_green_tym=dataJsonObject.getInt("new_green_tym");
-<<<<<<< HEAD
-<<<<<<< HEAD
 				String description = rewardJsonObject.getString("description");
-=======
-				String description = rewardJsonObject.getString("desciption");
->>>>>>> 9b791f9135748977a42c6dadfc75dfe7b9b5aa7a
-=======
-				String description = rewardJsonObject.getString("desciption");
->>>>>>> 9b791f9135748977a42c6dadfc75dfe7b9b5aa7a
 				String image = rewardJsonObject.getString("image");
 				String gametype = rewardJsonObject.getString("game_type");
 				int idreward = rewardJsonObject.getInt("id");
@@ -139,5 +131,6 @@ public class JsonUtil {
 		}
 		return null;
 	}
+
 
 }
