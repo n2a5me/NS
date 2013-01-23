@@ -118,7 +118,7 @@ public class JsonUtil {
 				rewardJsonObject = dataJsonObject.getJSONObject("reward");
 				int new_purple_tym=dataJsonObject.getInt("new_purple_tym");
 				int new_green_tym=dataJsonObject.getInt("new_green_tym");
-				String description = rewardJsonObject.getString("desciption");
+				String description = rewardJsonObject.getString("description");
 				String image = rewardJsonObject.getString("image");
 				String gametype = rewardJsonObject.getString("game_type");
 				int idreward = rewardJsonObject.getInt("id");

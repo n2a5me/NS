@@ -30,18 +30,17 @@ public class HttpHelper {
 		String requestUrl = API.GET_USER_DATA_URL + API.ACCESS_TOKEN + "="
 				+ JsonUtil.getAccessToken(getAccesToken()) + "&" + API.LANG
 				+ "=" + API.LANG_VALUE;
-		// Log.d(TAG, requestUrl);
+		Log.d(TAG, requestUrl);
 		HttpGet httpGet = new HttpGet(requestUrl);
 		HttpClient client = HttpUtils.getNewHttpClient();
 		HttpResponse response;
 		try {
 			response = client.execute(httpGet);
-			// Log.d("daff", "connect " +
-			// response.getStatusLine().getStatusCode());
+			Log.d("daff", "connect " + response.getStatusLine().getStatusCode());
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				InputStream inputStream = response.getEntity().getContent();
 				s = CommonUtils.inputStreamToString(inputStream);
-				// Log.d(TAG, s);
+				Log.d(TAG, s);
 				client.getConnectionManager().shutdown();
 				client = null;
 				return s;
@@ -88,7 +87,7 @@ public class HttpHelper {
 			e.printStackTrace();
 			client = null;
 		}
-		// Log.d(TAG, result);
+		Log.d(TAG, result);
 		return result;
 
 	}
@@ -96,7 +95,7 @@ public class HttpHelper {
 	public static ArrayList<NameValuePair> addParameter() {
 		ArrayList<NameValuePair> list = new ArrayList<NameValuePair>();
 		String requestToken = JsonUtil.getRequestToken(getRequestToken());
-		// Log.d(TAG, requestToken);
+		Log.d(TAG, requestToken);
 		list.add(new BasicNameValuePair(API.REQUEST_TOKEN, requestToken));
 		list.add(new BasicNameValuePair(API.CLIENT_ID, API.CLIENT_ID_VALUE));
 		list.add(new BasicNameValuePair(API.CLIENT_SECRET,
@@ -110,7 +109,7 @@ public class HttpHelper {
 	public static String getRequestToken() {
 		String result = "";
 		String url_request = API.REQUEST_TOKEN_URI;
-		// Log.d(TAG, url_request);
+		Log.d(TAG, url_request);
 		HttpGet httpGet = new HttpGet(url_request);
 		HttpClient client = HttpUtils.getNewHttpClient();
 		HttpResponse response;
@@ -119,7 +118,7 @@ public class HttpHelper {
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				InputStream inputStream = response.getEntity().getContent();
 				result = CommonUtils.inputStreamToString(inputStream);
-				// Log.d(TAG, result);
+				Log.d(TAG, result);
 				client.getConnectionManager().shutdown();
 				client = null;
 				return result;
@@ -135,7 +134,7 @@ public class HttpHelper {
 			client.getConnectionManager().shutdown();
 			client = null;
 		}
-		// Log.d(TAG, result);
+		Log.d(TAG, result);
 		return result;
 	}
 
@@ -144,7 +143,7 @@ public class HttpHelper {
 		String result = "";
 		String url_request = API.LOGIN_URL + "?" + API.ACCESS_TOKEN + "="
 				+ JsonUtil.getAccessToken(getAccesToken()) + "&lang=vni";
-		// Log.d(TAG, url_request);
+		Log.d(TAG, url_request);
 		HttpPost httpPost = new HttpPost(url_request);
 		httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded");
 		ArrayList<NameValuePair> nameValuePairs = addLoginParameter(context,
@@ -153,7 +152,7 @@ public class HttpHelper {
 		try {
 			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			HttpResponse response = client.execute(httpPost);
-			// Log.d(TAG, response.getStatusLine().getStatusCode() + "");
+			Log.d(TAG, response.getStatusLine().getStatusCode() + "");
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				InputStream inputStream = response.getEntity().getContent();
 				result = CommonUtils.inputStreamToString(inputStream);
@@ -172,7 +171,7 @@ public class HttpHelper {
 			e.printStackTrace();
 			client = null;
 		}
-		// Log.d(TAG, result);
+		Log.d(TAG, result);
 		return result;
 	}
 
@@ -181,7 +180,7 @@ public class HttpHelper {
 		String result = "";
 		String url_request = API.GET_GAME_PLAY_URL + "?" + API.ACCESS_TOKEN
 				+ "=" + access_token + "&lang=vni";
-		// Log.d(TAG, url_request);
+		Log.d(TAG, url_request);
 		HttpPost httpPost = new HttpPost(url_request);
 		httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded");
 		ArrayList<NameValuePair> nameValuePairs = addGamePlayParameterForPost(
@@ -190,7 +189,7 @@ public class HttpHelper {
 		try {
 			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			HttpResponse response = client.execute(httpPost);
-			// Log.d(TAG, response.getStatusLine().getStatusCode() + "");
+			Log.d(TAG, response.getStatusLine().getStatusCode() + "");
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				InputStream inputStream = response.getEntity().getContent();
 				result = CommonUtils.inputStreamToString(inputStream);
@@ -209,7 +208,7 @@ public class HttpHelper {
 			e.printStackTrace();
 			client = null;
 		}
-		// Log.d(TAG, result);
+		Log.d(TAG, result);
 		return result;
 	}
 
@@ -237,18 +236,17 @@ public class HttpHelper {
 		String s = "";
 		String requestUrl = API.GET_USER_DATA_URL + API.ACCESS_TOKEN + "="
 				+ access_token + "&" + API.LANG + "=" + API.LANG_VALUE;
-		// Log.d(TAG, requestUrl);
+		Log.d(TAG, requestUrl);
 		HttpGet httpGet = new HttpGet(requestUrl);
 		HttpClient client = HttpUtils.getNewHttpClient();
 		HttpResponse response;
 		try {
 			response = client.execute(httpGet);
-			// Log.d("daff", "connect " +
-			// response.getStatusLine().getStatusCode());
+			Log.d("daff", "connect " + response.getStatusLine().getStatusCode());
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				InputStream inputStream = response.getEntity().getContent();
 				s = CommonUtils.inputStreamToString(inputStream);
-				// Log.d(TAG, s);
+				Log.d(TAG, s);
 				client.getConnectionManager().shutdown();
 				client = null;
 				return s;

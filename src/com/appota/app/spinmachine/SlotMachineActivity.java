@@ -4,13 +4,19 @@ import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -23,6 +29,7 @@ import com.appota.app.spinmachine.widget.OnWheelChangedListener;
 import com.appota.app.spinmachine.widget.OnWheelScrollListener;
 import com.appota.app.spinmachine.widget.WheelView;
 import com.appota.network.HttpHelper;
+import com.appota.slotmachine.object.Reward;
 import com.appota.slotmachine.object.Spin;
 import com.appota.util.JsonUtil;
 
@@ -32,6 +39,14 @@ public class SlotMachineActivity extends Activity {
 	ImageView btn_exit, btn_start;
 	Spin mSpin;
 	protected boolean isWin = false;
+	private WheelView wheel1;
+	private WheelView wheel2;
+	private WheelView wheel3;
+	private ArrayList<Reward> rewards;
+	private Reward receivedReward = null;
+	private boolean willbeRecievedReward = true;
+	private int indexOfReward = 1;
+	private ProgressDialog proDialog;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -42,7 +57,15 @@ public class SlotMachineActivity extends Activity {
 	}
 
 	public void init() {
-		new GetUserDataAsync().execute(new Void[] {});
+		proDialog = new ProgressDialog(this);
+		proDialog.setMessage("Getting information from server...");
+		if (isOnline()) {
+			new GetUserDataAsync().execute(new Void[] {});
+		} else {
+			Toast.makeText(SlotMachineActivity.this,
+					"Không có network nên không thể chơi. Hãy kiểm tra lại.",
+					Toast.LENGTH_LONG).show();
+		}
 		initStrictMode();
 		initView();
 	}
@@ -50,9 +73,9 @@ public class SlotMachineActivity extends Activity {
 	private void initView() {
 		// TODO Auto-generated method stub
 		setContentView(R.layout.slot_machine_layout);
-		initWheel(R.id.slot_1);
-		initWheel(R.id.slot_2);
-		initWheel(R.id.slot_3);
+		wheel1 = initWheel(R.id.slot_1);
+		wheel2 = initWheel(R.id.slot_2);
+		wheel3 = initWheel(R.id.slot_3);
 
 		btn_exit = (ImageView) findViewById(R.id.btn_exit);
 		btn_exit.setOnClickListener(new OnClickListener() {
@@ -76,21 +99,88 @@ public class SlotMachineActivity extends Activity {
 	protected void onStartClick() {
 		// TODO Auto-generated method stub
 		if (mSpin != null) {
+			Toast.makeText(SlotMachineActivity.this,
+					"mspin.isfree" + mSpin.isFree, Toast.LENGTH_LONG).show();
 			if (mSpin.isFree) {
-				spin();
-				new PostGamePlay().execute(new Void[] {});
+
+				if (isOnline()) {
+					spin();
+					new PostGamePlay().execute(new Void[] {});
+				} else {
+					Toast.makeText(
+							SlotMachineActivity.this,
+							"Không có network nên không thể chơi. Hãy kiểm tra lại.",
+							Toast.LENGTH_LONG).show();
+				}
 			} else {
 				Toast.makeText(SlotMachineActivity.this,
-						"Bạn không còn lượt chơi free", Toast.LENGTH_SHORT)
+						"Ban khong con luot choi free", Toast.LENGTH_SHORT)
 						.show();
 			}
 		}
 	}
 
 	protected void spin() {
-		mixWheel(R.id.slot_1);
-		mixWheel(R.id.slot_2);
-		mixWheel(R.id.slot_3);
+		if (willbeRecievedReward) {
+			// reset wheels
+			wheel1.setCurrentItem(0, false);
+			wheel2.setCurrentItem(0, false);
+			wheel3.setCurrentItem(0, false);
+			// Temporary take random index
+			Random random = new Random();
+			indexOfReward = random.nextInt(3);
+			setItemForEachWheel(wheel1, indexOfReward);
+			setItemForEachWheel(wheel2, indexOfReward);
+			setItemForEachWheel(wheel3, indexOfReward);
+			// index of item/reward
+			// check what item will be the rewarded item
+			if (indexOfReward == 0) {
+				wheel1.scroll(-30000 * wheel1.getCycle(), 3000);
+				wheel2.scroll(-30000 * wheel2.getCycle(), 4500);
+				wheel3.scroll(-30000 * wheel3.getCycle(), 6000);
+				Log.d("Item", "Sao vang`");
+			} else if (indexOfReward == 1) {
+				wheel1.scroll(-30000 * wheel1.getCycle() + 1, 3000);
+				wheel2.scroll(-30000 * wheel2.getCycle() + 1, 4500);
+				wheel3.scroll(-30000 * wheel3.getCycle() + 1, 6000);
+				Log.d("Item", "Tim xanh");
+			} else {
+				wheel1.scroll(-30000 * wheel1.getCycle() + 2, 3000);
+				wheel2.scroll(-30000 * wheel2.getCycle() + 2, 4500);
+				wheel3.scroll(-30000 * wheel3.getCycle() + 2, 6000);
+				Log.d("Item", "Qua tang bi' mat");
+			}
+		} else {
+			int distance1 = -6000 + (int) (Math.random() * 50);
+			int distance2 = -6000 + (int) (Math.random() * 50);
+			int distance3 = -6000 + (int) (Math.random() * 50);
+			Log.d("distance 1 :", "" + distance1 + " %3 : " + distance1 % 3);
+			Log.d("distance 2 :", "" + distance2 + " %3 : " + distance2 % 3);
+			Log.d("distance 3 :", "" + distance3 + " %3 : " + distance3 % 3);
+
+			if (distance1 % 3 == distance2 % 3
+					&& distance1 % 3 == distance3 % 3) {
+				Log.d("An Exception", "Exception has been processed");
+				while (distance3 % 3 == distance1 % 3) {
+					distance3 = -600 + (int) (Math.random() * 50);
+				}
+				Log.d("distance 3 re-assigned to :", "" + distance3 + " %3 : "
+						+ distance3 % 3);
+			}
+			wheel1.scroll(distance1, 3000);
+			wheel2.scroll(distance2, 4500);
+			wheel3.scroll(distance3, 6000);
+		}
+	}
+
+	private void setItemForEachWheel(WheelView wheel, int index) {
+
+		wheel.setIndexOfWheel(index);
+		int cycle = 0;
+		while (cycle == 0) {
+			cycle = (int) (Math.random() * 10);
+		}
+		wheel.setCycle(cycle);
 	}
 
 	private void initStrictMode() {
@@ -120,6 +210,7 @@ public class SlotMachineActivity extends Activity {
 
 		public void onScrollingFinished(WheelView wheel) {
 			wheelScrolled = false;
+			updateStatus();
 		}
 	};
 
@@ -137,15 +228,14 @@ public class SlotMachineActivity extends Activity {
 	 * @param id
 	 *            the wheel widget Id
 	 */
-	private void initWheel(int id) {
+	private WheelView initWheel(int id) {
 		WheelView wheel = getWheel(id);
 		wheel.setViewAdapter(new SlotMachineAdapter(this));
-		wheel.setCurrentItem((int) (Math.random() * 10));
-
 		wheel.addChangingListener(changedListener);
 		wheel.addScrollingListener(scrolledListener);
 		wheel.setCyclic(true);
 		wheel.setEnabled(false);
+		return wheel;
 	}
 
 	/**
@@ -160,47 +250,12 @@ public class SlotMachineActivity extends Activity {
 	}
 
 	/**
-	 * Tests wheels
-	 * 
-	 * @return true
-	 */
-	// private boolean test() {
-	// // int value = getWheel(R.id.slot_1).getCurrentItem();
-	// // return testWheelValue(R.id.slot_2, value)
-	// // && testWheelValue(R.id.slot_3, value);
-	// }
-
-	/**
-	 * Tests wheel value
-	 * 
-	 * @param id
-	 *            the wheel Id
-	 * @param value
-	 *            the value to test
-	 * @return true if wheel value is equal to passed value
-	 */
-	private boolean testWheelValue(int id, int value) {
-		return getWheel(id).getCurrentItem() == value;
-	}
-
-	/**
-	 * Mixes wheel
-	 * 
-	 * @param id
-	 *            the wheel id
-	 */
-	private void mixWheel(int id) {
-		WheelView wheel = getWheel(id);
-		wheel.scroll(-350 + (int) (Math.random() * 50), 3000);
-	}
-
-	/**
 	 * Slot machine adapter
 	 */
 	private class SlotMachineAdapter extends AbstractWheelAdapter {
 		// Image size
-		final int IMAGE_WIDTH = 60;
-		final int IMAGE_HEIGHT = 36;
+		final int IMAGE_WIDTH = 50;
+		final int IMAGE_HEIGHT = 50;
 		int deseart_width = 0;
 		int deseart_height = 0;
 		// Slot machine symbols
@@ -285,25 +340,74 @@ public class SlotMachineActivity extends Activity {
 	}
 
 	public class PostGamePlay extends AsyncTask<Void, Void, Void> {
+		boolean isError = false;
+		String error_msg;
 
 		@Override
 		protected Void doInBackground(Void... params) {
 			// TODO Auto-generated method stub
 			if (game_token != null) {
-				if (mSpin.isFree)
-					HttpHelper.postGamePlay(game_token, "0", "green",
-							access_token);
+
+				if (mSpin.isFree) {
+					receivedReward = JsonUtil.getRewardData(HttpHelper
+							.postGamePlay(game_token, "0", "green",
+									access_token));
+				}
+
 				else {
-					HttpHelper.postGamePlay(game_token, "1", "green",
-							access_token);
+					receivedReward = JsonUtil.getRewardData(HttpHelper
+							.postGamePlay(game_token, "1", "green",
+									access_token));
+					;
 				}
 			}
 			return null;
 		}
 
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			showErrorDialog();
+		}
+	}
+
+	public void showErrorDialog() {
+		// TODO Auto-generated method stub
+		AlertDialog.Builder info = new AlertDialog.Builder(
+				SlotMachineActivity.this);
+		info.setTitle("Thông báo");
+		info.setMessage("Không thể kết nối đến server để lấy dữ liệu. Xin kiểm tra lại mạng.");
+		info.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				// TODO Auto-generated method stub
+				// Toast.makeText(FastStatus.this,
+				// "Byeeeeeeeee!", Toast.LENGTH_LONG);
+
+			}
+		});
+		info.show();
+
 	}
 
 	public class GetUserDataAsync extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+
+			super.onPreExecute();
+			proDialog.show();
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			proDialog.dismiss();
+		}
 
 		@Override
 		protected Void doInBackground(Void... params) {
@@ -314,6 +418,7 @@ public class SlotMachineActivity extends Activity {
 	}
 
 	public void initUser() {
+
 		String username = "tuannx1987";
 		String password = "123456";
 		String responseLogin = HttpHelper.loginUser(SlotMachineActivity.this,
@@ -321,6 +426,75 @@ public class SlotMachineActivity extends Activity {
 		access_token = JsonUtil.getAccessToken(responseLogin);
 		String res_User_Data = HttpHelper.getUserData(access_token);
 		mSpin = JsonUtil.getSpinUserData(res_User_Data);
+		game_token = mSpin.game_token;
+		// Temporary allows run any time
+		mSpin.isFree = true;
+		if (proDialog.isShowing()) {
+			proDialog.dismiss();
+		}
+	}
+
+	/**
+	 * Updates status
+	 */
+	private void updateStatus() {
+		// // process if the wheels run separately
+		if (!wheel1.isScrollingPerformed() && !wheel2.isScrollingPerformed()
+				&& wheel3.isScrollingPerformed()) {
+			if (checkTheResult()) {
+
+				AlertDialog.Builder info = new AlertDialog.Builder(
+						SlotMachineActivity.this);
+				info.setTitle("Thông báo");
+				info.setMessage("Chúc mừng ! " + "\n");
+				info.setPositiveButton("Okay",
+						new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface arg0, int arg1) {
+								// TODO Auto-generated method stub
+								// Toast.makeText(FastStatus.this,
+								// "Byeeeeeeeee!", Toast.LENGTH_LONG);
+
+							}
+						});
+				info.show();
+				// Do save store info status, data(reward, new purple/green TYM)
+
+			} else {
+				Toast.makeText(SlotMachineActivity.this,
+						"May mắn lần sau nhé !", Toast.LENGTH_LONG).show();
+			}
+		}
+	}
+
+	/**
+	 * Tests wheels
+	 * 
+	 * @return true
+	 */
+	private boolean checkTheResult() {
+
+		if (!willbeRecievedReward) {
+
+		}
+
+		if (getWheel(R.id.slot_1).getCurrentItem() == getWheel(R.id.slot_2)
+				.getCurrentItem()
+				&& getWheel(R.id.slot_1).getCurrentItem() == getWheel(
+						R.id.slot_3).getCurrentItem()) {
+			return true;
+		} else
+			return false;
+
+	}
+
+	// Check whether the device's network is available.
+	public boolean isOnline() {
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		return cm.getActiveNetworkInfo() != null
+				&& cm.getActiveNetworkInfo().isConnectedOrConnecting();
 	}
 
 }

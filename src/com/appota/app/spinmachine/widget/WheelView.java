@@ -959,4 +959,25 @@ public class WheelView extends View {
 	public void stopScrolling() {
 		scroller.stopScrolling();
 	}
+
+	private int numberOfCycle;
+
+	private int indexOfWheel;
+
+	public int getCycle() {
+		return numberOfCycle;
+	}
+
+	public void setCycle(int cycle) {
+		this.numberOfCycle = cycle;
+	}
+
+	public void setIndexOfWheel(int index) {
+		indexOfWheel = index;
+	}
+
+	public boolean isScrollingPerformed() {
+		// TODO Auto-generated method stub
+		return isScrollingPerformed;
+	}
 }
