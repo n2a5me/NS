@@ -1,0 +1,371 @@
+package kankan.wheel.demo;
+
+import java.lang.ref.SoftReference;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+//import kankan.wheel.R;
+import kankan.wheel.widget.OnWheelChangedListener;
+import kankan.wheel.widget.OnWheelScrollListener;
+import kankan.wheel.widget.WheelView;
+import kankan.wheel.widget.adapters.AbstractWheelAdapter;
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
+import android.widget.TextView;
+import android.widget.Toast;
+import kankan.wheel.widget.WheelItem;
+
+public class SlotMachineActivity extends Activity {
+	private boolean goal=false;
+	private WheelView wheel1;
+	private WheelView wheel2;
+	private WheelView wheel3;
+	private WheelItem starItem ;
+	private WheelItem tymItem;
+	private WheelItem crowItem;
+	private ArrayList<WheelItem> wheelItems;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.slot_machine_layout);
+        initWheel();
+        
+        Button btn_start = (Button)findViewById(R.id.btn_mix);
+        //Getting user info then : check whether user has right to play or not, getting probability of each item, 
+        //temporary fix:
+        wheelItems=new ArrayList<WheelItem>();
+    	double starProbability=0;
+    	double tymProbability=0;
+    	double crowProbability=100;
+        starItem = new WheelItem(starProbability,0);
+        tymItem = new WheelItem(tymProbability, 1);
+        crowItem = new WheelItem(crowProbability, 2);
+        wheelItems.add(starItem);
+        wheelItems.add(tymItem);
+        wheelItems.add(crowItem);
+        
+        btn_start.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+            	setItemForEachWheel(wheel1);
+            	setItemForEachWheel(wheel2);
+            	setItemForEachWheel(wheel3);
+                wheel1.scroll(-350 + (int)(Math.random() * 50), 3000);
+                wheel2.scroll(-350 + (int)(Math.random() * 50), 3000);
+                wheel3.scroll(-350 + (int)(Math.random() * 50), 3000);
+                
+            }
+        });
+        
+        updateStatus();
+//        CheckBox luckySwitcher=(CheckBox)findViewById(R.id.luckyswitcher);
+//        luckySwitcher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//			
+//			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//				// TODO Auto-generated method stub
+//				enableLucky=isChecked;
+//			}
+//		});
+    }
+
+	public  void setItemForEachWheel(WheelView wheel) {
+		
+		double randomPro = Math.random();
+		double cumulativeProbability = 0.0;
+		for (WheelItem item : wheelItems) {
+			cumulativeProbability += item.getReletiveProb();
+		    if (randomPro <= cumulativeProbability) {
+		       wheel.setWheelItem(item);
+		        return;
+		    }
+		}
+		//get probability & set first:
+		//temporary fix :
+//		TYMItem tymWheel1=new TYMItem();
+//		tymWheel1.setReletiveProb(1);
+//		tymWheel1.setItem(wheel1.getCurrentItem());
+//		TYMItem tymWheel2=new TYMItem();
+//		tymWheel1.setReletiveProb(5);
+//		TYMItem tymWheel3=new TYMItem();
+//		tymWheel1.setReletiveProb(5);
+//        //probability=ABCD;
+        Random random=new Random();
+//        if(probability==0)
+//        {
+//        	goal=false;
+//        	return;
+//        }//temporary
+//        else
+//        {
+//        	probability=50;
+//        }
+    	int value=random.nextInt(100/50);
+    	Log.d("Value probability",value+"");
+    	if(value==0)
+    	{
+    		goal=true;
+    	}else 
+    		
+    	{
+    		goal=false;
+    	}
+    		wheel1.setGoal(goal);
+    		wheel2.setGoal(goal);
+    		wheel3.setGoal(goal);
+		
+	}
+    
+    // Wheel scrolled flag
+    private boolean wheelScrolled = false;
+    
+    // Wheel scrolled listener
+    OnWheelScrollListener scrolledListener = new OnWheelScrollListener() {
+        public void onScrollingStarted(WheelView wheel) {
+            wheelScrolled = true;
+        }
+        public void onScrollingFinished(WheelView wheel) {
+            wheelScrolled = false;
+            updateStatus();
+        }
+    };
+    
+    // Wheel changed listener
+    private OnWheelChangedListener changedListener = new OnWheelChangedListener() {
+        public void onChanged(WheelView wheel, int oldValue, int newValue) {
+            if (!wheelScrolled) {
+                updateStatus();
+            }
+        }
+    };
+    
+    /**
+     * Updates status
+     */
+    private void updateStatus() {
+    	
+    	//comment
+        TextView text = (TextView) findViewById(R.id.pwd_status);
+        if (checkTheResult()) {
+            text.setText("Congratulation!");
+        } else {
+            text.setText("");
+        }
+    }
+
+    /**
+     * Initializes wheel
+     * @param id the wheel widget Id
+     */
+    private void initWheel() {
+        wheel1 = getWheel(R.id.slot_1);
+        wheel1.setViewAdapter(new SlotMachineAdapter(this));
+        wheel1.setCurrentItem((int)(Math.random() * 10));
+        //wheel.setIsTheLastOne(thelastone);
+        wheel1.addChangingListener(changedListener);
+        wheel1.addScrollingListener(scrolledListener);
+        wheel1.setCyclic(true);
+        wheel1.setEnabled(false);
+        
+        wheel2 = getWheel(R.id.slot_2);
+        wheel2.setViewAdapter(new SlotMachineAdapter(this));
+        wheel2.setCurrentItem((int)(Math.random() * 10));
+        //wheel.setIsTheLastOne(thelastone);
+        wheel2.addChangingListener(changedListener);
+        wheel2.addScrollingListener(scrolledListener);
+        wheel2.setCyclic(true);
+        wheel2.setEnabled(false);
+        
+        wheel3 = getWheel(R.id.slot_3);
+        wheel3.setViewAdapter(new SlotMachineAdapter(this));
+        wheel3.setCurrentItem((int)(Math.random() * 10));
+        //wheel.setIsTheLastOne(thelastone);
+        wheel3.addChangingListener(changedListener);
+        wheel3.addScrollingListener(scrolledListener);
+        wheel3.setCyclic(true);
+        wheel3.setEnabled(false);
+    }
+    
+    /**
+     * Returns wheel by Id
+     * @param id the wheel Id
+     * @return the wheel with passed Id
+     */
+    private WheelView getWheel(int id) {
+        return (WheelView) findViewById(id);
+    }
+    
+    /**
+     * Tests wheels
+     * @return true 
+     */
+    private boolean checkTheResult() {
+    	
+    	if(!goal)	
+    	{
+    		if((getWheel(R.id.slot_1).getCurrentItem()==0) && getWheel(R.id.slot_2).getCurrentItem()==0)
+    		{
+    			//getWheel(R.id.slot_1)
+    			//int i=random.nextInt(2);
+    			getWheel(R.id.slot_3).setCurrentItem(1, false);
+    			
+    		}
+    	}
+    	// Store info : the TYMs left, game status, rewards if any.. 
+    	// temporary just inform users the result
+        int value = getWheel(R.id.slot_1).getCurrentItem();
+        Log.d("Item Slot1", value+"");
+        Log.d("Item Slot2", getWheel(R.id.slot_2).getCurrentItem()+"");
+        Log.d("Item Slot3", getWheel(R.id.slot_3).getCurrentItem()+"");
+        if(getWheel(R.id.slot_1).getCurrentItem()==0 && getWheel(R.id.slot_2).getCurrentItem()==0 && getWheel(R.id.slot_3).getCurrentItem()==0)
+        {
+        	return true;
+        }else return false;
+       
+    }
+    
+    /**
+     * Tests wheel value
+     * @param id the wheel Id
+     * @param value the value to test
+     * @return true if wheel value is equal to passed value
+     */
+    private boolean testWheelValue(int id, int value) {
+        return getWheel(id).getCurrentItem() == value;
+    }
+    
+    /**
+     * Mixes wheel
+     * @param id the wheel id
+     */
+    private void mixWheel(int id) {
+        WheelView wheel = getWheel(id);
+        if(goal)
+        {
+        	wheel.scroll(-300 , 3000);
+        }else
+        {
+        	wheel.scroll(-350 + (int)(Math.random() * 50), 3000);
+        }
+        
+    }
+    
+    /**
+     * Slot machine adapter
+     */
+    private class SlotMachineAdapter extends AbstractWheelAdapter {
+        // Image size
+        final int IMAGE_WIDTH = 60;
+        final int IMAGE_HEIGHT = 36;
+        
+        // Slot machine symbols
+        private final int items[] = new int[] {
+                R.drawable.star,
+                R.drawable.tym,
+                R.drawable.crow
+                
+        };
+        
+        // Cached images
+        private List<SoftReference<Bitmap>> images;
+        
+        // Layout inflater
+        private Context context;
+        
+        /**
+         * Constructor
+         */
+        public SlotMachineAdapter(Context context) {
+            this.context = context;
+            images = new ArrayList<SoftReference<Bitmap>>(items.length);
+            for (int id : items) {
+                images.add(new SoftReference<Bitmap>(loadImage(id)));
+            }
+        }
+        
+        /**
+         * Loads image from resources
+         */
+        private Bitmap loadImage(int id) {
+            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), id);
+            Bitmap scaled = Bitmap.createScaledBitmap(bitmap, IMAGE_WIDTH, IMAGE_HEIGHT, true);
+            bitmap.recycle();
+            return scaled;
+        }
+
+        @Override
+        public int getItemsCount() {
+            return items.length;
+        }
+
+        // Layout params for image view
+        final LayoutParams params = new LayoutParams(IMAGE_WIDTH, IMAGE_HEIGHT);
+        
+        @Override
+        public View getItem(int index, View cachedView, ViewGroup parent) {
+            ImageView img;
+            if (cachedView != null) {
+                img = (ImageView) cachedView;
+            } else {
+                img = new ImageView(context);
+            }
+            img.setLayoutParams(params);
+            SoftReference<Bitmap> bitmapRef = images.get(index);
+            Bitmap bitmap = bitmapRef.get();
+            if (bitmap == null) {
+                bitmap = loadImage(items[index]);
+                images.set(index, new SoftReference<Bitmap>(bitmap));
+            }
+            img.setImageBitmap(bitmap);
+            
+            return img;
+        }
+    }
+//    public void setProbatility(View button) {
+////        PopupMenu popup = new PopupMenu(this, button);
+////        popup.getMenuInflater().inflate(R.layout.popup, popup.getMenu());
+//// 
+////        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+////        	
+////            public boolean onMenuItemClick(MenuItem item) {
+//    	
+//    		Toast.makeText(SlotMachineActivity.this, "Tỉ lệ trúng : 10%",Toast.LENGTH_LONG).show();
+//              probability=10;  
+//                
+////                return true;
+////            }
+////        });
+////
+////        popup.show();
+//    }
+//    public class TYMItem {
+//    	private int reletiveProb;
+//        private int item;
+//    	public int getReletiveProb() {
+//    		return reletiveProb;
+//    	}
+//    	public void setReletiveProb(int reletiveProb) {
+//    		this.reletiveProb = reletiveProb;
+//    	}
+//    	public int getItem() {
+//    		return item;
+//    	}
+//    	public void setItem(int item) {
+//    		this.item = item;
+//    	}
+//    }
+}
+
