@@ -5,6 +5,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -13,15 +15,20 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.AnimationDrawable;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appota.app.spinmachine.adapter.AbstractWheelAdapter;
@@ -31,6 +38,7 @@ import com.appota.app.spinmachine.widget.WheelView;
 import com.appota.network.HttpHelper;
 import com.appota.slotmachine.object.Reward;
 import com.appota.slotmachine.object.Spin;
+import com.appota.util.CommonUtils;
 import com.appota.util.JsonUtil;
 
 public class SlotMachineActivity extends Activity {
@@ -47,6 +55,19 @@ public class SlotMachineActivity extends Activity {
 	private boolean willbeRecievedReward = true;
 	private int indexOfReward = 1;
 	private ProgressDialog proDialog;
+	private Handler handler;
+	boolean isRunning = false;
+	AnimationDrawable animationDrawable;
+	private boolean enableSpin = true;
+	private String rewardItem;
+	private boolean serverError = false;
+	private SoundPool soundPool;
+	private int soundSpinning;
+	private int soundEndOfSpinning;
+	private int soundWinning;
+	private boolean _onPause=false;
+	private TextView playtimes;
+	private TextView ads;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -57,8 +78,16 @@ public class SlotMachineActivity extends Activity {
 	}
 
 	public void init() {
+		_onPause=false;
+		handler = new Handler();
+		soundPool = new SoundPool(16, AudioManager.STREAM_MUSIC, 128);
+		soundSpinning = soundPool.load(getContext(), R.raw.spinning, 1);
+		soundEndOfSpinning = soundPool
+				.load(getContext(), R.raw.stopspinning, 1);
+		soundWinning = soundPool.load(getContext(), R.raw.cheering, 1);
 		proDialog = new ProgressDialog(this);
-		proDialog.setMessage("Getting information from server...");
+		proDialog.setMessage("Đang lấy thông tin từ máy chủ...");
+		proDialog.setCancelable(false);
 		if (isOnline()) {
 			new GetUserDataAsync().execute(new Void[] {});
 		} else {
@@ -66,13 +95,25 @@ public class SlotMachineActivity extends Activity {
 					"Không có network nên không thể chơi. Hãy kiểm tra lại.",
 					Toast.LENGTH_LONG).show();
 		}
-		initStrictMode();
+		
+		// initStrictMode();
 		initView();
+	}
+
+	private Context getContext() {
+		return SlotMachineActivity.this;
 	}
 
 	private void initView() {
 		// TODO Auto-generated method stub
 		setContentView(R.layout.slot_machine_layout);
+		ImageView img = (ImageView) findViewById(R.id.img);
+		playtimes=(TextView)findViewById(R.id.playtimes);
+		ads=(TextView)findViewById(R.id.ads);
+		animationDrawable = (AnimationDrawable) img.getBackground();
+		animationDrawable.setCallback(img);
+		animationDrawable.setVisible(false, true);
+
 		wheel1 = initWheel(R.id.slot_1);
 		wheel2 = initWheel(R.id.slot_2);
 		wheel3 = initWheel(R.id.slot_3);
@@ -96,27 +137,131 @@ public class SlotMachineActivity extends Activity {
 		});
 	}
 
-	protected void onStartClick() {
-		// TODO Auto-generated method stub
-		if (mSpin != null) {
-			Toast.makeText(SlotMachineActivity.this,
-					"mspin.isfree" + mSpin.isFree, Toast.LENGTH_LONG).show();
+	// @Override
+	// public void onConfigurationChanged(Configuration newConfig) {
+	// super.onConfigurationChanged(newConfig);
+	// setContentView(R.layout.slot_machine_layout);
+	// }
+	private void informUserFreeSpin() {
+		if (!serverError) {
 			if (mSpin.isFree) {
+				AlertDialog.Builder info = new AlertDialog.Builder(
+						SlotMachineActivity.this);
+				info.setTitle("Thông báo");
+				info.setMessage("Bạn còn 1 lượt chơi miễn phí trong ngày. Chiến thôi !");
+				info.setPositiveButton("Okay",
+						new DialogInterface.OnClickListener() {
 
-				if (isOnline()) {
-					spin();
-					new PostGamePlay().execute(new Void[] {});
-				} else {
-					Toast.makeText(
-							SlotMachineActivity.this,
-							"Không có network nên không thể chơi. Hãy kiểm tra lại.",
-							Toast.LENGTH_LONG).show();
+							@Override
+							public void onClick(DialogInterface arg0, int arg1) {
+								// TODO Auto-generated method stub
+								// Toast.makeText(FastStatus.this,
+								// "Byeeeeeeeee!", Toast.LENGTH_LONG);
+
+							}
+						});
+				if(!_onPause)
+				{
+					info.show();
 				}
+				serverError=false;
 			} else {
-				Toast.makeText(SlotMachineActivity.this,
-						"Ban khong con luot choi free", Toast.LENGTH_SHORT)
-						.show();
+				AlertDialog.Builder info = new AlertDialog.Builder(
+						SlotMachineActivity.this);
+				info.setTitle("Thông báo");
+				info.setMessage("Bạn đã hết lượt chơi free trong ngày. Ngày mai quay tiếp nhé!");
+				info.setPositiveButton("Okay",
+						new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface arg0, int arg1) {
+								// TODO Auto-generated method stub
+								// Toast.makeText(FastStatus.this,
+								// "Byeeeeeeeee!", Toast.LENGTH_LONG);
+
+							}
+						});
+				if(!_onPause)
+				{
+					info.show();
+				}
 			}
+		} else {
+			AlertDialog.Builder info = new AlertDialog.Builder(
+					SlotMachineActivity.this);
+			info.setTitle("Thông báo");
+			info.setMessage("Server đang quá tải. Hãy thử lại sau ít phút nữa nhé.");
+			info.setPositiveButton("Okay",
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface arg0, int arg1) {
+
+						}
+					});
+			if(!_onPause)
+			{
+				info.show();
+			}
+		}
+
+	}
+
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		// TODO Auto-generated method stub
+		super.onWindowFocusChanged(hasFocus);
+		
+	}
+
+	protected void onStartClick() {
+
+		if (!serverError) {
+			if (mSpin != null) {
+
+				if (enableSpin)// Do Spinning
+				{
+					if (mSpin.isFree) {
+
+						if (isOnline()) {
+							enableSpin = false;
+
+							new PostGamePlay().execute(new Void[] {});
+						} else {
+							Toast.makeText(
+									SlotMachineActivity.this,
+									"Không có network nên không thể chơi. Hãy kiểm tra lại.",
+									Toast.LENGTH_LONG).show();
+						}
+					} else {
+						Toast.makeText(
+								SlotMachineActivity.this,
+								"Bạn đã hết lượt chơi free. Mai quay tiếp nhé.",
+								Toast.LENGTH_SHORT).show();
+					}
+				}
+				// else
+				// {
+				// Toast.makeText(SlotMachineActivity.this,
+				// "Bạn đã hết lượt chơi free. Mai quay tiếp nhé.",
+				// Toast.LENGTH_SHORT)
+				// .show();
+				// }
+			}
+		} else {
+			AlertDialog.Builder info = new AlertDialog.Builder(
+					SlotMachineActivity.this);
+			info.setTitle("Thông báo");
+			info.setMessage("Server đang quá tải. Hãy thử lại sau ít phút nữa nhé.");
+			info.setPositiveButton("Okay",
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface arg0, int arg1) {
+
+						}
+					});
+			info.show();
 		}
 	}
 
@@ -129,6 +274,14 @@ public class SlotMachineActivity extends Activity {
 			// Temporary take random index
 			Random random = new Random();
 			indexOfReward = random.nextInt(3);
+			if (indexOfReward == 0) {
+				rewardItem = "Sao Vàng";
+			} else if (indexOfReward == 1) {
+				rewardItem = "Tim Xanh";
+			} else {
+				rewardItem = "Hộp Quà";
+			}
+			
 			setItemForEachWheel(wheel1, indexOfReward);
 			setItemForEachWheel(wheel2, indexOfReward);
 			setItemForEachWheel(wheel3, indexOfReward);
@@ -171,6 +324,7 @@ public class SlotMachineActivity extends Activity {
 			wheel2.scroll(distance2, 4500);
 			wheel3.scroll(distance3, 6000);
 		}
+		soundPool.play(soundSpinning, 0.99f, 0.99f, 0, -1, 1);
 	}
 
 	private void setItemForEachWheel(WheelView wheel, int index) {
@@ -206,11 +360,13 @@ public class SlotMachineActivity extends Activity {
 	OnWheelScrollListener scrolledListener = new OnWheelScrollListener() {
 		public void onScrollingStarted(WheelView wheel) {
 			wheelScrolled = true;
+			Log.d("start", wheelScrolled + "");
 		}
 
 		public void onScrollingFinished(WheelView wheel) {
 			wheelScrolled = false;
 			updateStatus();
+			Log.d("finish", wheelScrolled + "");
 		}
 	};
 
@@ -253,12 +409,6 @@ public class SlotMachineActivity extends Activity {
 	 * Slot machine adapter
 	 */
 	private class SlotMachineAdapter extends AbstractWheelAdapter {
-		// Image size
-		final int IMAGE_WIDTH = 50;
-		final int IMAGE_HEIGHT = 50;
-		int deseart_width = 0;
-		int deseart_height = 0;
-		// Slot machine symbols
 		private final int items[] = new int[] { R.drawable.star,
 				R.drawable.tym, R.drawable.crow
 
@@ -287,8 +437,10 @@ public class SlotMachineActivity extends Activity {
 		private Bitmap loadImage(int id) {
 			Bitmap bitmap = BitmapFactory.decodeResource(
 					context.getResources(), id);
-			Bitmap scaled = Bitmap.createScaledBitmap(bitmap, IMAGE_WIDTH,
-					IMAGE_HEIGHT, true);
+			int width = bitmap.getWidth();
+			int height = bitmap.getHeight();
+			Bitmap scaled = Bitmap.createScaledBitmap(bitmap, width, height,
+					true);
 			bitmap.recycle();
 			return scaled;
 		}
@@ -325,7 +477,7 @@ public class SlotMachineActivity extends Activity {
 			Bitmap bitmap = bitmapRef.get();
 			if (bitmap == null) {
 				if (width != 0 && height != 0) {
-					bitmap = loadImage(items[index], width, height);
+					bitmap = loadImage(items[index]);
 					images.set(index, new SoftReference<Bitmap>(bitmap));
 				} else {
 					bitmap = loadImage(items[index]);
@@ -352,6 +504,7 @@ public class SlotMachineActivity extends Activity {
 					receivedReward = JsonUtil.getRewardData(HttpHelper
 							.postGamePlay(game_token, "0", "green",
 									access_token));
+					mSpin.isFree = false;
 				}
 
 				else {
@@ -368,8 +521,25 @@ public class SlotMachineActivity extends Activity {
 		protected void onPostExecute(Void result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
-			showErrorDialog();
+			spin();
 		}
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+
+			super.onPreExecute();
+			// handler.post(new Runnable() {
+			// public void run() {
+			// if(!proDialog.isShowing())
+			// {
+			// proDialog.show();
+			// }
+			// }
+			// });
+
+		}
+
 	}
 
 	public void showErrorDialog() {
@@ -391,7 +561,13 @@ public class SlotMachineActivity extends Activity {
 		info.show();
 
 	}
-
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		proDialog.dismiss();
+		_onPause=true;
+	}
 	public class GetUserDataAsync extends AsyncTask<Void, Void, Void> {
 
 		@Override
@@ -399,73 +575,189 @@ public class SlotMachineActivity extends Activity {
 			// TODO Auto-generated method stub
 
 			super.onPreExecute();
-			proDialog.show();
-		}
+//			handler.post(new Runnable() {
+//				public void run() {
+			if(!proDialog.isShowing())
+					proDialog.show();
+//				}
+//			});
 
+		}
+		
 		@Override
 		protected void onPostExecute(Void result) {
 			// TODO Auto-generated method stub
-			super.onPostExecute(result);
-			proDialog.dismiss();
+			// super.onPostExecute(result);
+//			handler.post(new Runnable() {
+//				public void run() {
+					if (proDialog.isShowing()) {
+						proDialog.dismiss();
+					}
+					informUserFreeSpin();
+//				}
+//			});
+
 		}
 
 		@Override
 		protected Void doInBackground(Void... params) {
 			// TODO Auto-generated method stub
-			initUser();
+			try {
+				initUser();
+			} catch (Exception e) {
+				serverError = true;
+				e.printStackTrace();
+				
+			}
 			return null;
 		}
 	}
 
 	public void initUser() {
-
-		String username = "tuannx1987";
-		String password = "123456";
+		
+		String username = "machequyhon2012";
+		String password = "tamthanphanliet";
+//		String username = "n2a5me";
+//		String password = "n123456789";
 		String responseLogin = HttpHelper.loginUser(SlotMachineActivity.this,
 				username, password);
 		access_token = JsonUtil.getAccessToken(responseLogin);
 		String res_User_Data = HttpHelper.getUserData(access_token);
 		mSpin = JsonUtil.getSpinUserData(res_User_Data);
-		game_token = mSpin.game_token;
-		// Temporary allows run any time
-		mSpin.isFree = true;
-		if (proDialog.isShowing()) {
-			proDialog.dismiss();
+		if(mSpin.isFree)
+		{
+			handler.post(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					playtimes.setText("Bạn còn 1 lượt quay !");
+					btn_start.setEnabled(true);
+					ads.setText(mSpin.ads.getDescription());
+				}
+			});
+			
+		}else
+		{
+			handler.post(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					playtimes.setText("Bạn không còn lượt quay nào. Quay lại trong vòng :"+CommonUtils.convertUnixTime(mSpin.timeavailable));
+					btn_start.setEnabled(true);
+					ads.setText(mSpin.ads.getDescription());
+				}
+			});
+			
 		}
+		
+		game_token = mSpin.game_token;
+	}
+
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		soundPool.release();
+		soundPool = null;
 	}
 
 	/**
 	 * Updates status
 	 */
 	private void updateStatus() {
-		// // process if the wheels run separately
+		// process if the wheels run separately
 		if (!wheel1.isScrollingPerformed() && !wheel2.isScrollingPerformed()
 				&& wheel3.isScrollingPerformed()) {
+			enableSpin = true;
+			if(soundPool!=null)
+			{
+				soundPool.stop(soundSpinning);
+			}
+			
 			if (checkTheResult()) {
-
+				if(soundPool!=null)
+				{
+					soundPool.play(soundWinning, 0.99f, 0.99f, 0, 0, 1);
+				}
+				animationDrawable.setVisible(true, true);
+				animationDrawable.start();
 				AlertDialog.Builder info = new AlertDialog.Builder(
 						SlotMachineActivity.this);
 				info.setTitle("Thông báo");
-				info.setMessage("Chúc mừng ! " + "\n");
-				info.setPositiveButton("Okay",
-						new DialogInterface.OnClickListener() {
+				if(receivedReward==null)
+				{
+					info.setMessage("\nSự cố khi lấy thông tin về phần thưởng.");
+					info.setPositiveButton("Okay",
+							new DialogInterface.OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface arg0, int arg1) {
-								// TODO Auto-generated method stub
-								// Toast.makeText(FastStatus.this,
-								// "Byeeeeeeeee!", Toast.LENGTH_LONG);
+								@Override
+								public void onClick(DialogInterface arg0, int arg1) {
+									// TODO Auto-generated method stub
+									// Toast.makeText(FastStatus.this,
+									// "Byeeeeeeeee!", Toast.LENGTH_LONG);
 
-							}
-						});
-				info.show();
-				// Do save store info status, data(reward, new purple/green TYM)
+								}
+							});
+					info.show();
+				}else
+				{
+					info.setMessage("\nBạn nhận được "
+							+ receivedReward.getDescription());
+					info.setPositiveButton("Okay",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface arg0, int arg1) {
+									// TODO Auto-generated method stub
+									// Toast.makeText(FastStatus.this,
+									// "Byeeeeeeeee!", Toast.LENGTH_LONG);
+
+								}
+							});
+					info.show();
+				}
+				
 
 			} else {
 				Toast.makeText(SlotMachineActivity.this,
 						"May mắn lần sau nhé !", Toast.LENGTH_LONG).show();
 			}
+//			handler.postDelayed(new Runnable() {
+//				
+//				@Override
+//				public void run() {
+//					// TODO Auto-generated method stub
+//					Timer autoCheckUserData=new Timer();
+//					autoCheckUserData.schedule(new TimerTask() {
+//						
+//						@Override
+//						public void run() {
+//							// TODO Auto-generated method stub
+//							handler.post(new Runnable() {
+//								
+//								@Override
+//								public void run() {
+//									// TODO Auto-generated method stub
+//									new GetUserDataAsync().execute(new Void[] {});
+//								}
+//							});
+//						}
+//					}, 120000);
+//				}
+//			}, 120000);
+			
+				playtimes.setText("Bạn đã hết lượt chơi. Hãy quay lại trong "+CommonUtils.convertUnixTime(mSpin.timeavailable));
+				btn_start.setEnabled(false);
+			
+			
 		}
+		if(!_onPause)
+		{
+			soundPool.play(soundEndOfSpinning, 0.99f, 0.99f, 0, 0, 1);
+		}
+		
 	}
 
 	/**

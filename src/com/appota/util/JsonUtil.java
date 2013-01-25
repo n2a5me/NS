@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import android.util.Log;
 
 import com.appota.network.API;
+import com.appota.slotmachine.object.Ads;
 import com.appota.slotmachine.object.GreenTym;
 import com.appota.slotmachine.object.PurpleTym;
 import com.appota.slotmachine.object.Reward;
@@ -77,6 +78,14 @@ public class JsonUtil {
 				JSONObject jsonObject = new JSONObject(str);
 				JSONObject dataJsonObject = jsonObject.getJSONObject("data");
 				spinJsonObject = dataJsonObject.getJSONObject("spin");
+				JSONObject settingsObj=spinJsonObject.getJSONObject("settings");
+				JSONObject adsObj=settingsObj.getJSONObject("ads");
+				String description=adsObj.getString("description");
+				String image=adsObj.getString("image");
+				String type=adsObj.getString("type");
+				String store=adsObj.getString("store");
+				String uri=adsObj.getString("uri");
+				Ads ads=new Ads(description, image, type, store, uri);
 				JSONObject greenTymJsonObject = spinJsonObject
 						.getJSONObject("bet_green_tym");
 				String green_tym_value = greenTymJsonObject
@@ -98,9 +107,10 @@ public class JsonUtil {
 				JSONObject settingJsonObject = spinJsonObject
 						.getJSONObject("settings");
 				String gameToken = settingJsonObject.getString("game_token");
+				int timeavailable=freeJsonObject.getInt("time_available");
 				boolean status_spinner = freeJsonObject.getBoolean("status");
 				Spin spin = new Spin(purpleTym, greenTym, gameToken,
-						status_spinner);
+						status_spinner,timeavailable,ads);
 				return spin;
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -110,7 +120,7 @@ public class JsonUtil {
 		return null;
 	}
 	public static Reward getRewardData(String str) {
-		if (checkUserStatus(str)) {
+//		if (checkUserStatus(str)) {
 			JSONObject rewardJsonObject;
 			try {
 				JSONObject jsonObject = new JSONObject(str);
@@ -128,8 +138,8 @@ public class JsonUtil {
 				e.printStackTrace();
 				return null;
 			}
-		}
-		return null;
+//		}
+
 	}
 
 

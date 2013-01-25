@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -18,7 +20,15 @@ import android.util.Log;
  */
 public class CommonUtils {
 	private static final String TAG = CommonUtils.class.getName();
-
+	public static String convertUnixTime(int time) {
+		  if (time==0) {
+		   return "";
+		  }
+		  Date date = new Date(Long.valueOf(time) * 1000);
+		  SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		  String returnDate = format.format(date);
+		  return returnDate;
+		 }
 	public static String inputStreamToString(InputStream is) {
 		String line = "";
 		StringBuilder total = new StringBuilder();
@@ -62,7 +72,6 @@ public class CommonUtils {
 	public static String getPhoneNumber(Context context) {
 		TelephonyManager tMgr = (TelephonyManager) context
 				.getSystemService(Context.TELEPHONY_SERVICE);
-		Log.d(TAG, tMgr.getLine1Number());
 		return tMgr.getLine1Number();
 	}
 

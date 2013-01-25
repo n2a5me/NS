@@ -557,13 +557,19 @@ public class WheelView extends View {
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		Log.d(TAG, widthMeasureSpec+"");
+		Log.d(TAG, heightMeasureSpec+"");
 		int widthMode = MeasureSpec.getMode(widthMeasureSpec);
 		int heightMode = MeasureSpec.getMode(heightMeasureSpec);
 		int widthSize = MeasureSpec.getSize(widthMeasureSpec);
 		int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
-		buildViewForMeasuring();
-
+//		buildViewForMeasuring();
+		if (itemsLayout != null) {
+			recycle.recycleItems(itemsLayout, firstItem, new ItemsRange());
+		} else {
+			createItemsLayout();
+		}
 		int width = calculateLayoutWidth(widthSize, widthMode);
 
 		int height;
@@ -577,7 +583,7 @@ public class WheelView extends View {
 			}
 		}
 
-		setMeasuredDimension(width, height);
+		setMeasuredDimension(widthSize, heightSize);
 	}
 
 	@Override
@@ -813,8 +819,6 @@ public class WheelView extends View {
 			int first = recycle.recycleItems(itemsLayout, firstItem, range);
 			updated = firstItem != first;
 			firstItem = first;
-			Log.d(TAG, "item layout != null re create first item  ="
-					+ firstItem);
 		} else {
 			createItemsLayout();
 			updated = true;
