@@ -28,6 +28,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,6 +69,7 @@ public class SlotMachineActivity extends Activity {
 	private boolean _onPause=false;
 	private TextView playtimes;
 	private TextView ads;
+	private ProgressDialog proDialogWaitingSpin;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -86,6 +88,9 @@ public class SlotMachineActivity extends Activity {
 				.load(getContext(), R.raw.stopspinning, 1);
 		soundWinning = soundPool.load(getContext(), R.raw.cheering, 1);
 		proDialog = new ProgressDialog(this);
+		proDialogWaitingSpin=new ProgressDialog(this);
+		proDialogWaitingSpin.setCancelable(false);
+		proDialogWaitingSpin.setMessage("Hãy chờ xíu trước khi quay..");
 		proDialog.setMessage("Đang lấy thông tin từ máy chủ...");
 		proDialog.setCancelable(false);
 		if (isOnline()) {
@@ -132,7 +137,7 @@ public class SlotMachineActivity extends Activity {
 		btn_start.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				onStartClick();
-
+				btn_exit.setEnabled(enableSpin);
 			}
 		});
 	}
@@ -364,7 +369,7 @@ public class SlotMachineActivity extends Activity {
 		}
 
 		public void onScrollingFinished(WheelView wheel) {
-			wheelScrolled = false;
+			
 			updateStatus();
 			Log.d("finish", wheelScrolled + "");
 		}
@@ -521,22 +526,15 @@ public class SlotMachineActivity extends Activity {
 		protected void onPostExecute(Void result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
+			proDialogWaitingSpin.dismiss();
 			spin();
 		}
 
 		@Override
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
-
+			proDialogWaitingSpin.show();
 			super.onPreExecute();
-			// handler.post(new Runnable() {
-			// public void run() {
-			// if(!proDialog.isShowing())
-			// {
-			// proDialog.show();
-			// }
-			// }
-			// });
 
 		}
 
@@ -631,7 +629,7 @@ public class SlotMachineActivity extends Activity {
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
-					playtimes.setText("Bạn còn 1 lượt quay !");
+					playtimes.setText("Bạn còn 1 lượt quay thưởng!");
 					btn_start.setEnabled(true);
 					ads.setText(mSpin.ads.getDescription());
 				}
@@ -644,7 +642,7 @@ public class SlotMachineActivity extends Activity {
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
-					playtimes.setText("Bạn không còn lượt quay nào. Quay lại trong vòng :"+CommonUtils.convertUnixTime(mSpin.timeavailable));
+					playtimes.setText("Bạn đã hết lượt quay thưởng. Vui lòng quay trở lại vào :"+CommonUtils.convertUnixTime(mSpin.timeavailable));
 					btn_start.setEnabled(true);
 					ads.setText(mSpin.ads.getDescription());
 				}
@@ -653,6 +651,15 @@ public class SlotMachineActivity extends Activity {
 		}
 		
 		game_token = mSpin.game_token;
+	}
+	
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		if(!wheelScrolled)
+		{
+			super.onBackPressed();
+		}
 	}
 
 	@Override
@@ -666,11 +673,14 @@ public class SlotMachineActivity extends Activity {
 	/**
 	 * Updates status
 	 */
+	
 	private void updateStatus() {
 		// process if the wheels run separately
 		if (!wheel1.isScrollingPerformed() && !wheel2.isScrollingPerformed()
 				&& wheel3.isScrollingPerformed()) {
 			enableSpin = true;
+			wheelScrolled = false;
+			btn_exit.setEnabled(enableSpin);
 			if(soundPool!=null)
 			{
 				soundPool.stop(soundSpinning);
@@ -703,8 +713,8 @@ public class SlotMachineActivity extends Activity {
 					info.show();
 				}else
 				{
-					info.setMessage("\nBạn nhận được "
-							+ receivedReward.getDescription());
+					info.setMessage("\nChúc mừng bạn! "
+							+ receivedReward.getDescription()+" vào tài khoản. Bạn sẽ có thêm lượt quay vào ngày hôm sau!");
 					info.setPositiveButton("Okay",
 							new DialogInterface.OnClickListener() {
 
@@ -721,8 +731,19 @@ public class SlotMachineActivity extends Activity {
 				
 
 			} else {
-				Toast.makeText(SlotMachineActivity.this,
-						"May mắn lần sau nhé !", Toast.LENGTH_LONG).show();
+				AlertDialog.Builder info = new AlertDialog.Builder(
+						SlotMachineActivity.this);
+				info.setTitle("Thông báo");
+				info.setMessage("\nThật tiếc, bạn không trúng thưởng trong lượt quay này.\nBạn sẽ có thêm lượt quay vào ngày hôm sau! Chúc bạn may mắn lần sau!");
+				info.setPositiveButton("Okay",
+						new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface arg0, int arg1) {
+								
+							}
+						});
+				info.show();
 			}
 //			handler.postDelayed(new Runnable() {
 //				
@@ -748,7 +769,7 @@ public class SlotMachineActivity extends Activity {
 //				}
 //			}, 120000);
 			
-				playtimes.setText("Bạn đã hết lượt chơi. Hãy quay lại trong "+CommonUtils.convertUnixTime(mSpin.timeavailable));
+				playtimes.setText("Bạn đã hết lượt chơi. Hãy quay lại vào "+CommonUtils.convertUnixTime(mSpin.timeavailable) +" để chơi tiếp!");
 				btn_start.setEnabled(false);
 			
 			
