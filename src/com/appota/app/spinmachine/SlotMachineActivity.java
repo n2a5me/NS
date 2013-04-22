@@ -546,7 +546,7 @@ public class SlotMachineActivity extends Activity {
 						if(receivedReward.getGifts().get(i).getType().equalsIgnoreCase("apple_giftcard")||receivedReward.getGifts().get(i).getType().equalsIgnoreCase("google_giftcard")||receivedReward.getGifts().get(i).getType().equalsIgnoreCase("viettel_phonecard")||receivedReward.getGifts().get(i).getType().equalsIgnoreCase("vinaphone_phonecard")||receivedReward.getGifts().get(i).getType().equalsIgnoreCase("mobifone_phonecard"))
 						{
 							giftDescription.setText(receivedReward.getGifts()
-									.get(i).getType().replace('_', ' ')+" : "+receivedReward.getValue());
+									.get(i).getType().replace('_', ' ')+" : "+receivedReward.getValue() +".");
 						}else
 						{
 							giftDescription.setText(receivedReward.getGifts()
@@ -608,7 +608,29 @@ public class SlotMachineActivity extends Activity {
 						final ArrayList<String> permis = new ArrayList<String>();
 						final JSONObject pram = new JSONObject();
 						try {
-							pram.put("message", receivedReward.getDescription());
+							if(receivedReward.getGifts().size()>0)
+							{
+								String allGifts=receivedReward.getDescription()+"(";
+								for(int i=0;i<receivedReward.getGifts().size();i++)
+								{
+									if(receivedReward.getGifts().get(i).getType().equalsIgnoreCase("apple_giftcard")||receivedReward.getGifts().get(i).getType().equalsIgnoreCase("google_giftcard")||receivedReward.getGifts().get(i).getType().equalsIgnoreCase("viettel_phonecard")||receivedReward.getGifts().get(i).getType().equalsIgnoreCase("vinaphone_phonecard")||receivedReward.getGifts().get(i).getType().equalsIgnoreCase("mobifone_phonecard"))
+									{
+										allGifts+=receivedReward.getGifts()
+												.get(i).getType().replace('_', ' ')+" : "+receivedReward.getValue() +".";
+									}else
+									{
+										allGifts+=receivedReward.getGifts()
+												.get(i).getValue() +" "+ receivedReward.getGifts()
+												.get(i).getType().replace('_', ' ');
+									}
+								}
+								allGifts+=")";
+								pram.put("message", allGifts);
+							}else
+							{
+								pram.put("message", receivedReward.getDescription());
+							}
+							
 							pram.put("link", "http://appstore.vn/a/6789");
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
