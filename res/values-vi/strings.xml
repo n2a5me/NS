@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="lblApp">Spin AppStoreVn</string>
+    <string name="close_app_confirm">Đóng Daily Spin?</string>
+    <string name="title_activity_first_screen">First Screen</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_temp_layout">TempLayout</string>
+	<string name="ok">Đồng ý</string>
+	<string name="cancel">Huỷ bỏ</string>
+	<string name="getGametokenInfo">Chờ chút trước khi quay..</string>
+	<string name="checkingServer">Đang kiểm tra kết nối tới máy chủ..</string>
+	<string name="checkingServerFailed">Không thể kết nối tới máy chủ. Hãy thử lại sau.</string>
+	<string name="giftList">Danh sách Quà</string>
+	<string name="used">Đã quay!</string>
+	<string name="sharing_on_facebook">Đang chia sẻ lên facebook..</string>
+	<string name="getting_permission_at_first">Hãy đồng ý chia sẻ lên facebook của bạn trước đã!</string>
+	<string name="free">Miễn phí!</string>
+	<string name="share_fb_success">Chia sẽ lên Facebook thành công!</string>
+	<string name="new_free_spin">Đang có 1 Free Spin!</string>
+	<string name="share_fb_error">Không thể chia sẻ Facebook. Xin hãy thử lại sau.</string>
+	<string name="continue_confirm">Bạn muốn tiếp tục không?</string>
+	<string name="nofreespin">Bạn đã sử dụng lượt quay ngày hôm nay rồi.\nLượt quay tiếp theo sẽ là ngày mai.</string>
+	<string name="getting_data_from_server">Đang lấy dữ liệu từ máy chủ. Xin hãy đợi..</string>
+	<string name="no_network_connection_for_starting">Không có kết nối mạng. Xin hãy kiểm tra kết nối mạng để chơi Daily Spin.</string>
+	<string name="no_network_connection">Không có kết nối mạng.</string>
+	<string name="require_number_of_tym">Số TYM cho mỗi lần quay là </string>
+	<string name="message_not_win">Bạn không được nhận món quà nào cả..\nBạn sẽ có lượt chơi miễn phí vào ngày mai. Chúc may mắn lần sau!</string>
+	<string name="tym_purple"> TYM tím</string>
+	<string name="share_btn">Chia sẻ</string>
+	<string name="continue_btn">Tiếp tục</string>
+	<string name="tym_green"> TYM xanh</string>
+	<string name="tym_yellow"> TYM vàng</string>
+	<string name="onemorefreespin">Bạn còn 1 lượt chơi miễn phí trong ngày!</string>
+	<string name="message_congratulations">Chúc Mừng</string>
+	<string name="start_free_spin">Quay luôn chứ?</string>
+	<string name="couldnot_retrieve_data">Không lấy được dữ liệu từ máy chủ, xin hãy thử lại sau.</string>
+	<string name="message_title_dialog">Thông báo</string>
+	<string name="message_content_win">Bạn đã nhận được </string>
+	<string name="not_enough_tym">Bạn không có đủ TYM</string>
+</resources>

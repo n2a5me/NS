@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/win_item_bg_top_2x"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/giftIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/reward_1_2x" >
+        </ImageView>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/win_item_bg_bottom_2x"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/giftDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textColor="@android:color/black"
+            android:text="Ban da trung 00 tym tim!"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+	<LinearLayout 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginTop="20dp"
+	    >
+	    <Button 
+	        android:id="@+id/continueBtn"
+	        android:layout_width="0dp"
+	        android:layout_weight="1"
+	        android:layout_height="wrap_content"
+	        android:text="@string/continue_btn"
+	        android:background="@drawable/button"/>
+	    <Button 
+	        android:id="@+id/sharebtn"
+	        android:layout_width="0dp"
+	        android:layout_weight="1"
+	        android:text="@string/share_btn"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/button"/>
+	</LinearLayout>
+</LinearLayout>

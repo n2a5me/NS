@@ -1,148 +1,67 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/layout_bg"
-    android:orientation="horizontal" >
-
-    <ImageView
-        android:id="@+id/img"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:background="@anim/animate" />
-
-    <TextView
-        android:id="@+id/ads"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:paddingBottom="30dp"
-        android:shadowColor="@android:color/white"
-        android:shadowDx="-3"
-        android:shadowDy="-3"
-        android:shadowRadius="1"
-        android:text="AppStoreVn"
-        android:textColor="#00ccff"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:typeface="sans" />
-
-    <TextView
-        android:id="@+id/playtimes"
-        android:layout_above="@id/ads"
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ellipsize="middle"
-        android:layout_marginBottom="10dp"
-        android:gravity="center_horizontal"
-        android:textColor="#7CFC00"/>
+    android:background="@android:color/white"
+    android:id="@+id/slotmachineLayout" >
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="horizontal" >
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical" >
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal" >
 
-            <LinearLayout
+            <ImageView
+                android:id="@+id/topbg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/bg_spin_2x_01" />
+        </LinearLayout>
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/head_left" />
+        <LinearLayout
+            android:id="@+id/bodybg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal" >
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/conner" >
-
-                    <ImageView
-                        android:id="@+id/btn_exit"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:layout_marginLeft="10dp"
-                        android:src="@drawable/exit" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:src="@drawable/bg_spin_2x_02" />
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/left" />
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" >
 
-                    <LinearLayout
+                    <ImageView
                         android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/bg_spin_2x_03_00" >
+                    </ImageView>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal" >
 
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/mid_left" />
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="fill_parent"
-                            android:orientation="vertical" >
-
-                            <TextView
-                                android:id="@+id/edittext"
-                                android:layout_width="fill_parent"
-                                android:layout_height="0dp"
-                                android:layout_weight="1"
-                                android:background="@drawable/text_bg"
-                                android:ellipsize="marquee"
-                                android:focusable="true"
-                                android:focusableInTouchMode="true"
-                                android:freezesText="true"
-                                android:marqueeRepeatLimit="marquee_forever"
-                                android:scrollHorizontally="true"
-                                android:singleLine="true"
-                                android:text="@string/welcome"
-                                android:textColor="@color/text_color" />
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/mid_top" />
-                        </LinearLayout>
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/mid_right1" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:orientation="horizontal" >
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/mid_left2" />
+                            android:src="@drawable/bg_spin_2x_03_01" >
+                        </ImageView>
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -154,68 +73,54 @@
                                 android:layout_width="0dp"
                                 android:layout_height="fill_parent"
                                 android:layout_weight="1" />
-
+							<ImageView android:layout_width="wrap_content"
+							    android:layout_height="fill_parent"
+							    android:src="@drawable/slot2x"/>
                             <com.appota.app.spinmachine.widget.WheelView
                                 android:id="@+id/slot_2"
                                 android:layout_width="0dp"
                                 android:layout_height="fill_parent"
                                 android:layout_weight="1" />
-
+							<ImageView android:layout_width="wrap_content"
+							    android:layout_height="fill_parent"
+							    android:src="@drawable/slot2x"/>
                             <com.appota.app.spinmachine.widget.WheelView
                                 android:id="@+id/slot_3"
                                 android:layout_width="0dp"
                                 android:layout_height="fill_parent"
                                 android:layout_weight="1" />
                         </LinearLayout>
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/mid_right2" />
+<!--                         <ImageView -->
+<!--                             android:layout_width="wrap_content" -->
+<!--                             android:layout_height="wrap_content" -->
+<!--                             android:src="@drawable/bg_spin_2x_03_02" > -->
+<!--                         </ImageView> -->
                     </LinearLayout>
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/mid_bottom" />
                 </LinearLayout>
+            </LinearLayout>
 
-                <LinearLayout
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical" >
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/top_right" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/mid_right"
-                        android:gravity="center" >
-
-                        <ImageView
-                            android:id="@+id/btn_start"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/mid_right"
-                            android:src="@drawable/bt_start" />
-                    </LinearLayout>
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/bottom_right" />
-                </LinearLayout>
+                    android:src="@drawable/bg_spin_2x_04" />
             </LinearLayout>
         </LinearLayout>
 
-        <ImageView
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/right" />
+            android:background="@drawable/bg_spin_2x_05" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_height="wrap_content"
+                android:src="@drawable/logo_appstorevn_2x" />
+        </RelativeLayout>
     </LinearLayout>
 
 </RelativeLayout>

@@ -1,22 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="kankan.wheel.demo"
-      android:versionCode="1"
-      android:versionName="1.0">
-      <uses-sdk android:minSdkVersion="8"
-          android:targetSdkVersion="11"/>
-    <application android:icon="@drawable/wheel_icon" android:label="Wheel Demo">
+    package="com.appota.app.spinmachine"
+    android:versionCode="1"
+    android:versionName="1.0" >
 
-		<activity android:name="kankan.wheel.demo.SlotMachineActivity">
-		    <intent-filter>
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="17" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission
+        android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+    <application
+        android:icon="@drawable/reward_8_2x"
+        android:label="@string/lblApp"
+        android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" >
+        <activity
+            android:name="com.appota.app.spinmachine.SlotMachineActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape" >
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.VIEW" /> -->
+
+
+            <!-- <category android:name="android.intent.category.DEFAULT" /> -->
+            <!-- <category android:name="android.intent.category.BROWSABLE" /> -->
+
+
+            <!-- <data android:scheme="http" /> -->
+            <!-- <data android:scheme="https" /> -->
+            <!-- <data android:host="appota.com" /> -->
+            <!-- <data android:host="www.appota.com" /> -->
+            <!-- </intent-filter> -->
+        </activity>
+        <activity
+            android:name="com.appota.app.spinmachine.FirstScreen"
+            android:screenOrientation="landscape" >
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-		</activity>
-		
-
+        </activity>
+        <activity android:name="com.facebook.LoginActivity" />
+         <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/app_id" />
+        <activity
+            android:name="com.appota.app.spinmachine.TempLayout"
+            android:label="@string/title_activity_temp_layout" >
+        </activity>
     </application>
 
-
-</manifest> 
+</manifest>

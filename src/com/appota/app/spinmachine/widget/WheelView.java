@@ -475,7 +475,7 @@ public class WheelView extends View {
 					SHADOWS_COLORS);
 		}
 
-		setBackgroundResource(R.drawable.wheel_bg);
+//		setBackgroundResource(R.drawable.wheel_bg);
 	}
 
 	/**
