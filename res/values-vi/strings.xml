@@ -9,6 +9,7 @@
     <string name="title_activity_temp_layout">TempLayout</string>
 	<string name="ok">Đồng ý</string>
 	<string name="cancel">Huỷ bỏ</string>
+	<string name="copyCode">Đã copy mã thẻ!</string>
 	<string name="getGametokenInfo">Chờ chút trước khi quay..</string>
 	<string name="checkingServer">Đang kiểm tra kết nối tới máy chủ..</string>
 	<string name="checkingServerFailed">Không thể kết nối tới máy chủ. Hãy thử lại sau.</string>

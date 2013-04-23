@@ -31,9 +31,13 @@
             android:id="@+id/giftDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingLeft="30dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingRight="30dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:text="Ban da trung 00 tym tim!"
+            android:text="Ban da trung 0000001 tym vang!!!!!!!"
             android:textColor="@android:color/black" />
     </RelativeLayout>
 
@@ -49,8 +53,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
             android:paddingTop="9dp"
             android:layout_centerVertical="true"
             android:text="Ma so trung thuong la ABCD"

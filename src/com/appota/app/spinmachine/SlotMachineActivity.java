@@ -24,6 +24,7 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -527,6 +528,20 @@ public class SlotMachineActivity extends Activity {
 								.findViewById(R.id.giftCode);
 						giftCode.setText(receivedReward.getCode());
 						giftCode.setTextColor(Color.BLUE);
+						final String msg=getResources().getString(R.string.copyCode);
+						giftCode.setOnClickListener(new View.OnClickListener() {
+							
+							@Override
+							public void onClick(View v) {
+								// TODO Auto-generated method stub
+								
+								ClipboardManager clipboard=(ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
+								clipboard.setText(receivedReward.getCode());
+								Toast info=Toast.makeText(getContext(),msg, Toast.LENGTH_LONG);
+								info.show();
+								
+							}
+						});
 					}
 					
 					
