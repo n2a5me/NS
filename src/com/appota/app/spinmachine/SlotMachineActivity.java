@@ -518,6 +518,18 @@ public class SlotMachineActivity extends Activity {
 							REWARD.yellow_tym.toString())) {
 						giftIcon.setImageResource(R.drawable.reward_5_2x);
 					}
+					if(receivedReward.getType().contains("card"))
+					{
+						RelativeLayout giftCodeLayOut = (RelativeLayout) view
+								.findViewById(R.id.giftCodeLayOut);
+						giftCodeLayOut.setVisibility(View.VISIBLE);
+						TextView giftCode = (TextView) view
+								.findViewById(R.id.giftCode);
+						giftCode.setText(receivedReward.getCode());
+						giftCode.setTextColor(Color.BLUE);
+					}
+					
+					
 				} else {
 					view = factory.inflate(R.layout.win_items_bg_layout, null);
 					giftListLayout = (LinearLayout) view
@@ -537,10 +549,28 @@ public class SlotMachineActivity extends Activity {
 						ImageView icon = new ImageView(SlotMachineActivity.this);
 						icon.setImageResource(receivedReward.getGifts().get(i)
 								.getSrc());
+						icon.setId(i);
+						ImageView cardbg=new ImageView(SlotMachineActivity.this);
+						cardbg.setImageResource(R.drawable.card_bg2x);
+						rlp.addRule(RelativeLayout.BELOW, i);
+						rlp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+						rlp.addRule(RelativeLayout.CENTER_VERTICAL);
+						TextView cardNo = new TextView(
+								SlotMachineActivity.this);
+						cardNo.setTextColor(Color.BLUE);
+						cardNo.setText(receivedReward.getGifts().get(i).getValue()+"");
+						cardbg.setLayoutParams(rlp);
+						cardNo.setLayoutParams(rlp);
+						rlp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
 						rlp.addRule(RelativeLayout.CENTER_HORIZONTAL);
 						rlp.addRule(RelativeLayout.CENTER_VERTICAL);
 						icon.setLayoutParams(rlp);
 						rel.addView(icon);
+						if(receivedReward.getGifts().get(i).getType().contains("card"))
+						{
+							rel.addView(cardbg);
+							rel.addView(cardNo);
+						}
 						TextView giftDescription = new TextView(
 								SlotMachineActivity.this);
 						if(receivedReward.getGifts().get(i).getType().equalsIgnoreCase("apple_giftcard")||receivedReward.getGifts().get(i).getType().equalsIgnoreCase("google_giftcard")||receivedReward.getGifts().get(i).getType().equalsIgnoreCase("viettel_phonecard")||receivedReward.getGifts().get(i).getType().equalsIgnoreCase("vinaphone_phonecard")||receivedReward.getGifts().get(i).getType().equalsIgnoreCase("mobifone_phonecard"))
@@ -608,30 +638,30 @@ public class SlotMachineActivity extends Activity {
 						final ArrayList<String> permis = new ArrayList<String>();
 						final JSONObject pram = new JSONObject();
 						try {
-							if(receivedReward.getGifts().size()>0)
-							{
-								String allGifts=receivedReward.getDescription()+"(";
-								for(int i=0;i<receivedReward.getGifts().size();i++)
-								{
-									if(receivedReward.getGifts().get(i).getType().equalsIgnoreCase("apple_giftcard")||receivedReward.getGifts().get(i).getType().equalsIgnoreCase("google_giftcard")||receivedReward.getGifts().get(i).getType().equalsIgnoreCase("viettel_phonecard")||receivedReward.getGifts().get(i).getType().equalsIgnoreCase("vinaphone_phonecard")||receivedReward.getGifts().get(i).getType().equalsIgnoreCase("mobifone_phonecard"))
-									{
-										allGifts+=receivedReward.getGifts()
-												.get(i).getType().replace('_', ' ')+" : "+receivedReward.getValue() +".";
-									}else
-									{
-										allGifts+=receivedReward.getGifts()
-												.get(i).getValue() +" "+ receivedReward.getGifts()
-												.get(i).getType().replace('_', ' ');
-									}
-								}
-								allGifts+=")";
-								pram.put("message", allGifts);
-							}else
-							{
-								pram.put("message", receivedReward.getDescription());
-							}
-							
-							pram.put("link", "http://appstore.vn/a/6789");
+//							if(receivedReward.getGifts().size()>0)
+//							{
+//								String allGifts=receivedReward.getDescription()+"(";
+//								for(int i=0;i<receivedReward.getGifts().size();i++)
+//								{
+//									if(receivedReward.getGifts().get(i).getType().equalsIgnoreCase("apple_giftcard")||receivedReward.getGifts().get(i).getType().equalsIgnoreCase("google_giftcard")||receivedReward.getGifts().get(i).getType().equalsIgnoreCase("viettel_phonecard")||receivedReward.getGifts().get(i).getType().equalsIgnoreCase("vinaphone_phonecard")||receivedReward.getGifts().get(i).getType().equalsIgnoreCase("mobifone_phonecard"))
+//									{
+//										allGifts+=receivedReward.getGifts()
+//												.get(i).getType().replace('_', ' ')+" : "+receivedReward.getValue() +".";
+//									}else
+//									{
+//										allGifts+=receivedReward.getGifts()
+//												.get(i).getValue() +" "+ receivedReward.getGifts()
+//												.get(i).getType().replace('_', ' ');
+//									}
+//								}
+//								allGifts+=")";
+//								pram.put("message", allGifts);
+//							}else
+//							{
+//								pram.put("message", receivedReward.getDescription());
+//							}
+							pram.put("message", receivedReward.getDescription());
+							pram.put("link", "https://play.google.com/store/apps/details?id=com.appstoregp.vn");
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -699,7 +729,7 @@ public class SlotMachineActivity extends Activity {
 						
 					}
 				});
-				if (receivedReward.getGifts().size() == 0) {
+				if (receivedReward.getGifts().size() == 0 &&!receivedReward.getType().contains("card")) {
 					String tym_type="";
 					if(receivedReward.getType().replace('_', ' ').contains("purple"))
 					{
@@ -712,11 +742,15 @@ public class SlotMachineActivity extends Activity {
 						tym_type=getResources().getString(R.string.tym_yellow);
 					}
 					giftDescription.setText(receivedReward.getValue()+" "+ tym_type);
+				}else if (receivedReward.getGifts().size() == 0 &&receivedReward.getType().contains("card")) {
+					
+					giftDescription.setText(receivedReward.getDescription()+" "+receivedReward.getValue());
 				}
 //				view.setBackgroundColor(android.graphics.Color.TRANSPARENT);
 				winDialog.setView(view);
 				dialog = winDialog.create();
 //				dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+				dialog.setCancelable(false);
 				dialog.show();
 			} else {
 				AlertDialog.Builder info = new AlertDialog.Builder(

@@ -201,12 +201,18 @@ public class JsonUtil {
 					int new_green_tym=dataJsonObject.getInt("new_green_tym");
 					int new_yellow_tym=dataJsonObject.getInt("new_yellow_tym");
 					String description = _reward.getString("description");
+					String code="";
+					if(_reward.has("code"))
+					{
+						code=_reward.getString("code");
+					}
 					int value=0;
 					if(_reward.has("value"))
 					{
 						value=_reward.getInt("value");
 					}
 					reward=new Reward(description,type,value,new_purple_tym,new_green_tym,new_yellow_tym);
+					reward.setCode(code);
 					reward.setGifts(gifts);
 				
 				

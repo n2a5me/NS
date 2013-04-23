@@ -16,7 +16,16 @@ public class Reward {
 	private int new_green_tym;
 	private int new_yellow_tym;
 	private ArrayList<GiftItem> gifts;
+	private String code;
 	
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
 	public ArrayList<GiftItem> getGifts() {
 		return gifts;
 	}
