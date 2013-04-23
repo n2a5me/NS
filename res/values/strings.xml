@@ -9,6 +9,7 @@
 	<string name="ok">Ok</string>
 	<string name="close_app_confirm">Close Daily Spin?</string>
 	<string name="used">Used!</string>
+	<string name="oos">Opps! you missed a gift, good luck next time!</string>
 	<string name="copyCode">Copied code of the card!</string>
 	<string name="getGametokenInfo">Please wait before spinning..</string>
 	<string name="checkingServer">Checking connection to server..</string>

@@ -15,6 +15,7 @@
 	<string name="checkingServerFailed">Không thể kết nối tới máy chủ. Hãy thử lại sau.</string>
 	<string name="giftList">Hộp Quà May Mắn!</string>
 	<string name="used">Đã quay!</string>
+	<string name="oos">Ui! Bạn vừa bị lỡ mất một món quà, chúc bạn may mắn lần sau nhé!</string>
 	<string name="sharing_on_facebook">Đang chia sẻ lên facebook..</string>
 	<string name="getting_permission_at_first">Hãy đồng ý chia sẻ lên facebook của bạn trước đã!</string>
 	<string name="free">Miễn phí!</string>

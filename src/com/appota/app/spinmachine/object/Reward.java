@@ -17,7 +17,16 @@ public class Reward {
 	private int new_yellow_tym;
 	private ArrayList<GiftItem> gifts;
 	private String code;
-	
+	private boolean outOfStock=false;
+	public Reward(){}
+	public boolean isOutOfStock() {
+		return outOfStock;
+	}
+
+	public void setOutOfStock(boolean outOfStock) {
+		this.outOfStock = outOfStock;
+	}
+
 	public String getCode() {
 		return code;
 	}

@@ -32,6 +32,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -118,6 +120,9 @@ public class SlotMachineActivity extends Activity {
 		setContentView(R.layout.slot_machine_layout);
 		slotmachineLayout = (RelativeLayout) findViewById(R.id.slotmachineLayout);
 		Drawable themeDrawable = Drawable.createFromPath(theme);
+		ImageView logoBlink=(ImageView)findViewById(R.id.logoBlink);
+		Animation myFadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.tween);
+		logoBlink.startAnimation(myFadeInAnimation);
 		slotmachineLayout.setBackgroundDrawable(themeDrawable);
 		wheel1 = initWheel(R.id.slot_1);
 		wheel2 = initWheel(R.id.slot_2);
@@ -744,7 +749,7 @@ public class SlotMachineActivity extends Activity {
 						
 					}
 				});
-				if (receivedReward.getGifts().size() == 0 &&!receivedReward.getType().contains("card")) {
+				if (receivedReward.getGifts().size() == 0 &&!receivedReward.getType().contains("card")&&!receivedReward.getType().equalsIgnoreCase("OOS")) {
 					String tym_type="";
 					if(receivedReward.getType().replace('_', ' ').contains("purple"))
 					{
@@ -760,6 +765,12 @@ public class SlotMachineActivity extends Activity {
 				}else if (receivedReward.getGifts().size() == 0 &&receivedReward.getType().contains("card")) {
 					
 					giftDescription.setText(receivedReward.getDescription()+" "+receivedReward.getValue());
+				}else if (receivedReward.getType().equalsIgnoreCase(
+						"OOS")) {
+					giftDescription.setText(getResources().getString(R.string.oos));
+					RelativeLayout forOOS=(RelativeLayout)view.findViewById(R.id.forOOS);
+					forOOS.setVisibility(View.GONE);
+					shareBtn.setEnabled(false);
 				}
 //				view.setBackgroundColor(android.graphics.Color.TRANSPARENT);
 				winDialog.setView(view);

@@ -120,6 +120,12 @@
                 android:layout_centerHorizontal="true"
                 android:layout_height="wrap_content"
                 android:src="@drawable/logo_appstorevn_2x" />
+            <ImageView
+                android:id="@+id/logoBlink"
+                android:layout_width="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_height="wrap_content"
+                android:src="@drawable/logo_blink2x" />
         </RelativeLayout>
     </LinearLayout>
 

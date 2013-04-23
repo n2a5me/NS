@@ -7,6 +7,7 @@
 
     <RelativeLayout
         android:layout_width="wrap_content"
+        android:id="@+id/forOOS"
         android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content"
         android:background="@drawable/win_item_bg_top_2x" >
@@ -72,15 +73,19 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/button"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:background="@drawable/continuebtn"
             android:text="@string/continue_btn" />
 
         <Button
             android:id="@+id/sharebtn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
             android:layout_weight="1"
-            android:background="@drawable/button"
+            android:background="@drawable/sharebtn"
             android:text="@string/share_btn" />
     </LinearLayout>
 

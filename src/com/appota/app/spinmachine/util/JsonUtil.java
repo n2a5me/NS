@@ -11,8 +11,6 @@ import android.util.Log;
 import com.appota.app.spinmachine.R;
 import com.appota.app.spinmachine.network.API;
 import com.appota.app.spinmachine.object.Ads;
-import com.appota.app.spinmachine.object.GreenTym;
-import com.appota.app.spinmachine.object.PurpleTym;
 import com.appota.app.spinmachine.object.Reward;
 import com.appota.app.spinmachine.object.Spin;
 import com.appota.app.spinmachine.util.CommonStatic.REWARD;
@@ -62,7 +60,7 @@ public class JsonUtil {
 		try {
 			JSONObject jsonObject = new JSONObject(str);
 			int error_code = jsonObject.getInt("error_code");
-			if (error_code == 0) {
+			if (error_code == 0 || error_code==60) {
 				return true;
 			} else {
 				String error_message = jsonObject.getString("error_message");
@@ -149,7 +147,24 @@ public class JsonUtil {
 			try {
 				JSONObject jsonObject = new JSONObject(str);
 				JSONObject dataJsonObject = jsonObject.getJSONObject("data");
-				JSONObject _reward=dataJsonObject.getJSONObject("reward");
+				JSONObject _reward = null;
+				int new_purple_tym=dataJsonObject.getInt("new_purple_tym");
+				int new_green_tym=dataJsonObject.getInt("new_green_tym");
+				int new_yellow_tym=dataJsonObject.getInt("new_yellow_tym");
+				try {
+					_reward=dataJsonObject.getJSONObject("reward");
+				} catch (Exception e) {
+					reward=new Reward();
+					reward.setOutOfStock(true);
+					reward.setType("OOS");
+					reward.setGifts(gifts);
+					
+					reward.setNew_green_tym(new_green_tym);
+					reward.setNew_purple_tym(new_purple_tym);
+					reward.setNew_yellow_tym(new_yellow_tym);
+					return reward;
+				}
+				
 				String type=_reward.getString("type");
 				if(type.equalsIgnoreCase(REWARD.giftbox.toString()))
 				{
@@ -174,32 +189,30 @@ public class JsonUtil {
 							src=R.drawable.reward_7_2x;
 						}else if(_type.equals("gold_ticket"))
 						{
-							src=R.drawable.bonus_gold_ticket2x;
+							src=R.drawable.ticket2x;
 						}else if(_type.equals("apple_giftcard"))
 						{
-							src=R.drawable.reward_3_2x;
+							src=R.drawable.reward_card2x;
 						}else if(_type.equals("google_giftcard"))
 						{
-							src=R.drawable.reward_8_2x;
+							src=R.drawable.reward_card2x;
 						}else if(_type.equals("viettel_phonecard"))
 						{
-							src=R.drawable.reward_8_2x;
+							src=R.drawable.reward_card2x;
 						}else if(_type.equals("vinaphone_phonecard"))
 						{
-							src=R.drawable.reward_8_2x;
+							src=R.drawable.reward_card2x;
 						}
 						else if(_type.equals("mobifone_phonecard"))
 						{
-							src=R.drawable.reward_8_2x;
+							src=R.drawable.reward_card2x;
 						}
 						gift.setDescription(_desctiption);
 						gift.setValue(_value);
 						gift.setSrc(src);
 						gifts.add(gift);
 					}
-				}	int new_purple_tym=dataJsonObject.getInt("new_purple_tym");
-					int new_green_tym=dataJsonObject.getInt("new_green_tym");
-					int new_yellow_tym=dataJsonObject.getInt("new_yellow_tym");
+				}	
 					String description = _reward.getString("description");
 					String code="";
 					if(_reward.has("code"))
