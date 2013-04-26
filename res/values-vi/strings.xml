@@ -36,7 +36,7 @@
 	<string name="tym_yellow"> TYM vàng</string>
 	<string name="onemorefreespin">Bạn còn 1 lượt chơi miễn phí trong ngày!</string>
 	<string name="message_congratulations">Chúc Mừng</string>
-	<string name="start_free_spin">Quay luôn chứ?</string>
+	<string name="start_free_spin">Quay miễn phí luôn chứ?</string>
 	<string name="couldnot_retrieve_data">Không lấy được dữ liệu từ máy chủ, xin hãy thử lại sau.</string>
 	<string name="message_title_dialog">Thông báo</string>
 	<string name="message_content_win">Bạn đã nhận được </string>

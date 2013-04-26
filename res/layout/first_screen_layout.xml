@@ -222,7 +222,7 @@
                         android:id="@+id/bronzeTween"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bronze_card_bottom_2_2x" />
+                        android:background="@drawable/bronze_card_bottom_3_2x" />
 
                     <TextView
                         android:id="@+id/freeTextview"

@@ -73,6 +73,7 @@ public class SlotMachineActivity extends Activity {
 	private int soundSpinning;
 	private int soundEndOfSpinning;
 	private int soundWinning;
+	private int soundMissedGift;
 	private boolean _onPause = false;
 	private String bet;
 	private RelativeLayout slotmachineLayout;
@@ -102,6 +103,7 @@ public class SlotMachineActivity extends Activity {
 		soundSpinning = soundPool.load(getContext(), R.raw.spinning, 1);
 		soundEndOfSpinning = soundPool
 				.load(getContext(), R.raw.stopspinning, 1);
+		soundMissedGift=soundPool.load(getContext(), R.raw.missedgift, 1);
 		soundWinning = soundPool.load(getContext(), R.raw.cheering, 1);
 		proDialog = new ProgressDialog(this);
 		proDialogWaitingSpin = new ProgressDialog(this);
@@ -470,6 +472,7 @@ public class SlotMachineActivity extends Activity {
 				i.putExtra("is_used_free_spin", receive_free_ticket);
 			}
 			setResult(RESULT_OK, i);
+			Log.e("receive_free_ticket on back pressed",receive_free_ticket+"");
 			finish();
 
 		}
@@ -498,7 +501,14 @@ public class SlotMachineActivity extends Activity {
 
 			if (checkTheResult()) {
 				if (soundPool != null) {
-					soundPool.play(soundWinning, 0.99f, 0.99f, 0, 0, 1);
+					if (receivedReward.getType().equalsIgnoreCase("OOS"))
+					{
+						soundPool.play(soundMissedGift, 0.99f, 0.99f, 0, 0, 1);
+					}else
+					{
+						soundPool.play(soundWinning, 0.99f, 0.99f, 0, 0, 1);
+					}
+					
 				}
 				AlertDialog.Builder winDialog = new AlertDialog.Builder(
 						SlotMachineActivity.this);
@@ -631,7 +641,7 @@ public class SlotMachineActivity extends Activity {
 						Log.e("SlotMachineActivity", "onClick-Continue Btn");
 						Intent i = new Intent();
 						if (spinned) {
-							i.putExtra("is_used_free_spin", true);
+							i.putExtra("is_used_free_spin", receive_free_ticket);
 							if (receivedReward != null) {
 								i.putExtra("new_purple_tym",
 										receivedReward.getNew_purple_tym());
@@ -641,9 +651,10 @@ public class SlotMachineActivity extends Activity {
 										receivedReward.getNew_yellow_tym());
 							}
 						} else {
-							i.putExtra("is_used_free_spin", receive_free_ticket);
+							i.putExtra("is_used_free_spin", false);
 						}
 						setResult(RESULT_OK, i);
+						Log.e("receive_free_ticket",receive_free_ticket+"");
 						finish();
 					}
 				});
